@@ -30,7 +30,7 @@ var store = new express.session.MemoryStore;
 //MIDDLEWARE
 app.configure(function(){
   app.use(express.logger('dev'));
-  app.set('port', process.env.PORT || 3000);
+  app.set('port', process.env.PORT || 80);
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
   app.use(express.favicon());
