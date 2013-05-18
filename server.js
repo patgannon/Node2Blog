@@ -1,13 +1,18 @@
- title = 'Node2Blog';
- subTitle = 'A simple blog made in Node.js'
- password = 'narwhal';
+ title = "Pat Gannon's blog";
+ subTitle = 'Get stuff done';
+ password = process.env.BLOG_PWD || 'narwhal';
+ author = 'Pat Gannon';
+ siteUrl = 'http://www.patrickgannon.net/';
+ imageUrl = 'http://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Ruby_logo.svg/45px-Ruby_logo.svg.png';
+ 
 /**
  * Module dependencies.
  */
 var mongoose = require('mongoose');
 var db     = require('./db');
-var post = mongoose.model('post');
-
+var post_model = mongoose.model('post');
+var rss = require('rss');
+var feedTime = null;
 
  //change title to whatever you want your blog to be called
  //change subTitle to whatever you want your blog to be called
@@ -26,6 +31,7 @@ var express = require('express')
 
 var app = express();
 var store = new express.session.MemoryStore;
+var feedXml = "";
 
 //MIDDLEWARE
 app.configure(function(){
@@ -48,36 +54,66 @@ app.configure('development', function(){
   app.use(express.errorHandler());
 });
 
-////////get methods////////
+
 app.get('/', home.index);
+app.post('/', home.home_post_handler);
+
 app.get('/admin/delete', admin.delete);
+app.post('/admin/delete', admin.delete_post_handler);
+
 app.get('/admin/new', admin.new);
+app.post('/admin/new', admin.new_post_handler);
+
 app.get('/post/:id/:title', post.post_view);
-app.get('/admin' || '/admin/', admin.admin_check);
+app.post('/post/:id/:title', post.post_view_post_handler);
+
+app.get('/admin', admin.admin_check);
+app.post('/admin', admin.admin_check_post_handler);
+
 app.get('/admin/:id/edit', admin.admin_edit);
+app.post('/admin/:id/edit', admin.admin_edit_post_handler);
+
 app.get('/admin/logout', function(req,res){
   delete req.session.admin;
   console.log('logged-out')
   res.redirect('/');
 });
-
 app.get('/about', function(req, res) {
-  res.render('about', { title: title, subTitle:subTitle, admin:req.session.admin});
-      
+  res.render('about', { title: title, subTitle:subTitle, admin:req.session.admin});   
 });
-
-///////////////////////////
-
-
-///////post methods////////
-app.post('/admin/delete', admin.delete_post_handler);
-app.post('/admin/new', admin.new_post_handler);
-app.post('/admin' || '/admin/', admin.admin_check_post_handler);
-app.post('/admin/:id/edit', admin.admin_edit_post_handler);
-app.post('/', home.home_post_handler);
-app.post('/post/:id/:title', post.post_view_post_handler);
-
-///////////////////////////
+app.get('/rss.xml', function(req, res) {
+  //cache for 10 minutes
+  if (!feedTime || ((new Date()).getTime() - feedTime.getTime() > 600000)) {
+    var feed = new rss({
+      title: title,
+      description: subTitle,
+      feed_url: siteUrl + 'rss.xml',
+      site_url: siteUrl,
+      image_url: imageUrl,
+      author: author
+    });
+    
+    post_model.find({}).sort('-_id').execFind(function(err, posts){
+      if (posts) {
+        posts.forEach(function(entry) {
+          var delimiterIndex = entry.date.indexOf(" at "); //date is not JS-parse-able
+          var date = entry.date.substring(0, delimiterIndex);
+          feed.item({
+            title: entry.title,
+            description: entry.content,
+            url: siteUrl + 'post/' + entry._id + '/' + entry.title_sub,
+            date: date
+          });
+        });
+        feedXml = feed.xml();
+        feedTime = new Date();
+        res.send(feedXml);
+      }
+    });
+  } else {
+    res.send(feedXml);
+  }
+});
 
 
 //Server start
