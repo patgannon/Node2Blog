@@ -3,7 +3,6 @@ require "csv"
 include Mongo
 db = MongoClient.new.db("patrickgannon")
 posts = db.collection("posts")
-#posts.insert("title" => "another test", "title_sub" => "another-test", "content" => "Another TEST!!!", "date" => Time.now.to_s, "__v" => 0)
 CSV_FILE_PATH = "subtext_Content.csv"
 ID = 0
 Title = 1
@@ -21,6 +20,7 @@ EntryName = 12
 DateSyndicated = 13
 
 CSV.foreach(CSV_FILE_PATH) do |line|
-  #puts "Title = #{line[Title]}, e = #{line[EntryName]}"
-  posts.insert("title" => line[Title], "title_sub" => line[EntryName], "content" => line[Text], "date" => line[DateAdded], "__v" => 0)
+  content = line[Text]
+  content.gsub!("http://www.patrickgannon.net/Images/", "/images/")
+  posts.insert("title" => line[Title], "title_sub" => line[EntryName], "content" => content, "date" => line[DateAdded], "__v" => 0)
 end
