@@ -1,0 +1,1225 @@
+ID,Title,DateAdded,PostType,Author,Email,BlogId,Description,DateUpdated,Text,FeedBackCount,PostConfig,EntryName,DateSyndicated
+1,You found it!,2008-04-09 14:38:47.523,1,Pat Gannon,PatrickJosephGannon@yahoo.com,0,,2008-04-09 14:38:47.523,"<p>This is my new, re-hosted blog.  My old blog is at <a href=""http://blogs.veloc-it.com/pat"">http://blogs.veloc-it.com/pat</a> and you can view old posts there.  I may move that content over to this blog at some point, but there's no easy way to import content from an RSS feed in Subtext, so those posts will continue to live on veloc-it.com until I either decide to implement an RSS import for Subtext or just take the time to copy and paste everything.</p>
+<p>Thanks for updating your RSS feed!</p>
+<p> </p>",0,93,you-found-it,2008-04-09 14:38:47.528
+2,Get started in 5 minutes - jsUnit,2008-04-09 14:53:57.508,1,Pat Gannon,PatrickJosephGannon@yahoo.com,0,,2008-04-09 14:53:57.508,"<p><font face=""Arial"">This is the first post in a new blog post series I'm calling ""Get started in 5 minutes"".  In this post, I'm going to describe how you can get started using <a href=""http://www.jsunit.net/"">jsUnit</a> to unit test your client-side Javascript code in 5 minutes.  jsUnit is a port of jUnit (a Java unit testing framework) and there is a lot more to jsUnit that I'm not going to get into (you can even test server-side code), but I think this will be enough for many of you to unit test your client-side code.  In doing so, you can pracice <a href=""http://en.wikipedia.org/wiki/Test-driven_development"">Test Driven Development</a> without wincing when your Javascript grows in complexity.</font></p>
+<p><font face=""Arial"">""Either Karate: yes, or Karate: no.  No Karate: maybe so."" -Karate Kid</font></p>
+<p><font face=""Arial"">Here are the steps to get started...</font></p>
+<p><font face=""Arial"">1. <a href=""https://sourceforge.net/project/showfiles.php?group_id=28041"">Download jsUnit</a> (currently jsunit2.2alpha11.zip)</font></p>
+<p><font face=""Arial"">2. Extract the ""jsunit"" directory in the ZIP file into your web app folder.</font></p>
+<p><font face=""Arial"">3. Create a Javascript library containing the code to be tested.  In this case, call it MyLibrary.js, put it in your web app folder and paste in the following code:</font></p>
+<p><font face=""Arial"">function setName(name)<br />
+{<br />
+    document.all['name'].value = name;<br />
+}</font></p>
+<p><font face=""Arial"">4. Create a test page (similar to a test fixture in NUnit, etc.).  In this case, call it TestMyLibrary, put it in your web app folder and paste in the following code:</font></p>
+<p><font face=""Arial"">&lt;html&gt;<br />
+    &lt;head&gt;<br />
+        &lt;title&gt;jsUnit test&lt;/title&gt;<br />
+        &lt;script language=""JavaScript"" src=""jsunit/app/jsUnitCore.js""&gt;&lt;/script&gt;<br />
+        &lt;script language=""JavaScript"" src=""MyLibrary.js""&gt;&lt;/script&gt;<br />
+        &lt;script language=""JavaScript""&gt;<br />
+            <br />
+        function testSetName()<br />
+        {<br />
+            setName('Pat Gannon');<br />
+            assert('name field set incorrectly', document.all['name'].value == 'Pat Gannon');<br />
+        }<br />
+        <br />
+        &lt;/script&gt;<br />
+    &lt;/head&gt;<br />
+    &lt;body&gt;<br />
+        &lt;input name=""name"" type=""text"" /&gt;<br />
+    &lt;/body&gt;<br />
+&lt;/html&gt;</font></p>
+<p><font face=""Arial"">This test page includes the jsUnit library (jsUnitCore.js) which gives us testing functions like ""assert"".  As with other unit testing frameworks, there are a slew of assert-variants, listed <a href=""http://www.jsunit.net/documentation/assertions.html"">here</a>.</font></p>
+<p><font face=""Arial"">5. Navigate to http://&lt;web app&gt;/jsUnit/testRunner.html (type in the URL to your web app in place of &lt;web app&gt;).<br />
+ In the first text field, enter ""&lt;web app&gt;/jsUnit_test.html""<br />
+ Click the ""Run"" button</font></p>
+<p><font face=""Arial"">The bar on the page shows green, indicating that the test passed.  (Note that tests are auto-discovered, so the function name must begin with ""test"".)</font></p>
+<p><font face=""Arial""><strong>Architectural considerations</strong></font></p>
+<p><font face=""Arial"">One thing that strikes me as sub-optimal about jsUnit is that your tests must be DIRECTLY inside your (HTML) test page.  It would be nice if you could specify your test page in one test box (on the test runner page) and specify a Javascript file (which contains the actual tests) in another text box.  The reason this would be handy is that you could specify the actual page that the Javascript will be used in (production code) as your test page without having to embed your Javascript tests in your production web page.  Since that's not possible, here are some potential work-arounds:</font></p>
+<p><font face=""Arial"">A. Maintain a seperate test page from your regular (production) page<br />
+The problem with this approach is that if your Javascript depends on certain fields being present (or other UI constraints), then you will wind up needing to repeatedly migrate those fields (etc.) from your regular (production) page to your test page (or vise-versa if you're practicing TDD).  The nice thing about this approach is that it forces you to think about the dependencies of your Javascript code on the HTML page that uses it.  This could be adventageous when you want to re-use that Javascript because the test page provides a minimal template describing the UI elements that must be present in a page for it to use your Javascript library.</font></p>
+<p><font face=""Arial"">B. Include the unit tests in the regular (production) page<br />
+This is the most low-maintenance, low-tech solution to the problem.  You don't have to migrate any UI fields or do anything fancy, but your pages will download slower because people that browse to your web page will be downloading your unit test code.  This also might look funny to savvy users who do a 'view source' on your web page (or other developers maintaining your code in the future).</font></p>
+<p><font face=""Arial"">C. Server-side include mechanism<br />
+One solution that seems fairly slick to me would be to conditionally include the unit testing code in your regular (production) page using a server-side include that only comes into play when a query string parameter is present, like so:</font></p>
+<p><font face=""Arial"">&lt;% if (Request[""UnitTest""] == ""true"") { %&gt;<br />
+ &lt;!-- #Include File=""TestMyLibrary.js"" --&gt;<br />
+&lt;% } %&gt;</font></p>
+<p><font face=""Arial"">I have to admit that I haven't actually tried this approach so I'm not 100% sure it would work, but I'm confident that a solution along these lines would be possible through some mechanism.  This solution would keep maintenance (field migration) to a minimum without affecting download performance.</font></p>
+<p><font face=""Arial"">D. Manual Discovery of unit tests</font></p>
+<p><font face=""Arial"">Another solution that is a little klunky in my opinion would be to force the discovery of unit tests in a seperate Javascript file by declaring a Javascript function called ""exposeTestFunctionNames"" in your regular (production) page that returns a list of strings, which are the names of each of your test methods.  This solution would require you to include some test-related code (the aforementioned function) in your production code, but it would likely be far less than using solution B.</font></p>
+<p><font face=""Arial""><strong>Decision time</strong></font></p>
+<p><font face=""Arial"">Is there any better solutions that I haven't thought of?  In the application that I'm currently building, the test page has to be seperate from the production web page anyways (the production web pages that use the Javascript we're developing will not be under our control), so option A is a no-brainer for my current situation.  Since this is not a problem for me at the moment, I haven't actually tried to implement any of the aforementioned solutions, but I would be interested to hear how other people solve this problem (as I'm sure other people reading this blog post will be), so please post a comment!</font></p>
+<p><font face=""Arial""><strong>Ooh... Where do we go now? (appologies to Guns N Roses)</strong></font></p>
+<p><font face=""Arial"">Now that you have a basic unit test working with jsUnit, there are a number of resources that you may be interested in to help you kick it up a notch.  <a href=""http://www.opensourcetesting.org/unit_javascript.php"">This site</a> lists a number of different Javascript tools that relate to unit testing.  The most interesting thing I saw on there was <a href=""http://jsmock.sourceforge.net/"">jsmock</a>, which is a mocking framework for Javascript.  There is also <a href=""http://siliconforks.com/jscoverage/"">JSCoverage</a>, which generates code coverage statistics and <a href=""http://www.valleyhighlands.com/testingframeworks/"">JSXUnit</a> which apparently is for unit testing managed JScript code, including code that runs in Silverlight.  Last but certainly not least, you should go read the brief and to-the-point <a href=""http://www.jsunit.net/documentation/index.html"">jsUnit documentation</a>.<br />
+</font></p>",0,93,get-started-in-5-minutes---jsunit,2008-04-09 14:53:57.510
+3,Next NBNUG meeting: Subversion Integration in Visual Studio,2008-04-11 14:29:21.433,1,Pat Gannon,PatrickJosephGannon@yahoo.com,0,,2008-04-11 14:29:21.433,"<h4 style=""TEXT-ALIGN: center"" align=""center""><span style=""COLOR: red; FONT-FAMILY: Verdana"">Tuesday</span><span style=""FONT-FAMILY: Verdana"">, 4/15/2008, meeting at </span><st1:time minute=""0"" hour=""19""><span style=""FONT-FAMILY: Verdana"">7:00 PM</span></st1:time><o:p></o:p></h4>
+<h2 style=""TEXT-ALIGN: center"" align=""center""><span id=""WhereWhenField""></span>O'Reilly Media in <st1:place>Sebastopol</st1:place> <o:p></o:p></h2>
+<p style=""TEXT-ALIGN: center"" align=""center"" valign=""top""><span id=""WhereWhenField""></span><st1:street><st1:address>1003-1005 <span class=""SpellE"">Gravenstein</span> Highway North</st1:address></st1:street>, Sebastopol<br />
+Tarsier Conference Room (between Building B and Building C)<br />
+(8 miles west of <st1:city><st1:place>Santa Rosa</st1:place></st1:city>) <o:p></o:p></p>
+<span id=""DescriptionField"">
+<div align=""center"">
+<table style=""WIDTH: 466.5pt; mso-cellspacing: 2.2pt; mso-padding-alt: 0in 0in 0in 0in"" cellspacing=""3"" cellpadding=""0"" width=""622"" border=""0"" class=""MsoNormalTable"">
+    <tbody>
+        <tr style=""mso-yfti-irow: 0"">
+            <td style=""PADDING-RIGHT: 0.75pt; PADDING-LEFT: 0.75pt; PADDING-BOTTOM: 0.75pt; PADDING-TOP: 0.75pt"">
+            <p class=""MsoNormal""><span style=""FONT-FAMILY: Verdana"">My development team has recently switched from Visual SourceSafe and <span class=""SpellE"">SourceOffSite</span> to Subversion (SVN) for source code revision control.<o:p></o:p></span></p>
+            <p class=""MsoNormal""><span style=""FONT-FAMILY: Verdana""><span style=""mso-spacerun: yes""> </span><o:p></o:p></span></p>
+            <p class=""MsoNormal""><span style=""FONT-FAMILY: Verdana"">In this presentation, I'll talk briefly about the reasons we switched, and share how the transition was accomplished. The bulk of the presentation will be a workshop in which we'll connect two or more computers to a live SVN repository and let group members discover how to work with SVN hands-on.<o:p></o:p></span></p>
+            <p><o:p> </o:p></p>
+            </td>
+        </tr>
+        <tr style=""mso-yfti-irow: 1; mso-yfti-lastrow: yes"">
+            <td style=""PADDING-RIGHT: 0.75pt; PADDING-LEFT: 0.75pt; PADDING-BOTTOM: 0.75pt; PADDING-TOP: 0.75pt"" valign=""top""><span id=""Bio0"">
+            <p style=""MARGIN: 0in 0in 3.05pt""> <o:p></o:p></p>
+            <table style=""WIDTH: 95%; mso-cellspacing: 0in; mso-padding-alt: 0in 0in 0in 0in"" cellspacing=""0"" cellpadding=""0"" width=""95%"" border=""0"" class=""MsoNormalTable"">
+                <tbody>
+                    <tr style=""mso-yfti-irow: 0"">
+                        <td style=""PADDING-RIGHT: 0in; PADDING-LEFT: 0in; PADDING-BOTTOM: 0in; PADDING-TOP: 0in"">
+                        <h2 style=""MARGIN-TOP: 5.1pt; TEXT-ALIGN: center"" align=""center""><span id=""Span1""><span class=""itemtitle"">Speaker Biography</span></span></h2>
+                        </td>
+                    </tr>
+                    <tr style=""mso-yfti-irow: 1"">
+                        <td style=""PADDING-RIGHT: 0in; PADDING-LEFT: 0in; PADDING-BOTTOM: 0in; PADDING-TOP: 0in""><span id=""Span2"">
+                        <p class=""MsoNormal""><strong><o:p> </o:p></strong></p>
+                        <p class=""MsoNormal""><span style=""FONT-SIZE: 10pt; FONT-FAMILY: Verdana"">Steve <span class=""SpellE"">Bockman</span> is an independent software developer who began his career in 1977 in a utility position, installing software packages for a manufacturer of business computers. Since then he has worked in the fields of speech recognition, terrain analysis, computer graphics, desktop publishing, industrial automation and web applications.</span><o:p></o:p></p>
+                        <p class=""MsoNormal""> <o:p></o:p></p>
+                        <p class=""MsoNormal""><span style=""FONT-SIZE: 10pt; FONT-FAMILY: Verdana"">Steve’s first exposure to anything Agile occurred around 2000, when a co-worker suggested that they try pair programming. He liked what he saw, but didn't get involved again until 2005, while participating in a development effort in which changing requirements were part of the ground rules. He has been happily exploring Agile techniques ever since.</span><o:p></o:p></p>
+                        <p class=""MsoNormal"" style=""MARGIN-BOTTOM: 12pt""><strong style=""mso-bidi-font-weight: normal""><o:p> </o:p></strong></p>
+                        </span></td>
+                    </tr>
+                    <tr style=""mso-yfti-irow: 2"">
+                        <td style=""PADDING-RIGHT: 0in; PADDING-LEFT: 0in; PADDING-BOTTOM: 0in; PADDING-TOP: 0in"">
+                        <h2 style=""MARGIN-TOP: 5.1pt; TEXT-ALIGN: center"" align=""center""><span id=""AgendaTitle""><span class=""itemtitle"">Agenda</span></span></h2>
+                        </td>
+                    </tr>
+                    <tr style=""mso-yfti-irow: 3; mso-yfti-lastrow: yes"">
+                        <td style=""PADDING-RIGHT: 0in; PADDING-LEFT: 0in; PADDING-BOTTOM: 0in; PADDING-TOP: 0in""><span id=""Agenda"">
+                        <p class=""MsoNormal""><st1:time minute=""0"" hour=""19"">7:00 - 8:00</st1:time> Subversion presentation by Steve <span class=""SpellE"">Bockman</span><br />
+                        <st1:time minute=""0"" hour=""8""><span id=""Agenda0"">8:00 - 8:10</span></st1:time> Q&amp;A<br />
+                        <st1:time minute=""10"" hour=""8"">8:10 - 8:20</st1:time> book raffle <br />
+                        <st1:time minute=""20"" hour=""8"">8:20 - 8:30</st1:time> wrap up <br style=""mso-special-character: line-break"" />
+                        <br style=""mso-special-character: line-break"" />
+                        <o:p></o:p></p>
+                        </span></td>
+                    </tr>
+                </tbody>
+            </table>
+            <span style=""FONT-SIZE: 12pt; FONT-FAMILY: 'Times New Roman'; mso-fareast-font-family: 'Times New Roman'; mso-ansi-language: EN-US; mso-fareast-language: EN-US; mso-bidi-language: AR-SA""></span>
+            <p class=""MsoNormal""><o:p></o:p></p>
+            </span></td>
+        </tr>
+    </tbody>
+</table>
+</div>
+<p style=""MARGIN: 0in 0in 0pt""> </p>
+<p class=""MsoNormal""><br />
+<strong><span style=""FONT-SIZE: 10pt; FONT-FAMILY: Verdana"">For more information, go to <a href=""http://www.baynetug.org/"">http://www.baynetug.org/</a></span></strong> </p>
+<h3 style=""MARGIN-TOP: 5.1pt; TEXT-ALIGN: center"" align=""center"">Questions</h3>
+<p style=""MARGIN-TOP: 5.1pt; TEXT-ALIGN: center"" align=""center"">If you have any questions regarding this event please contact Pat Gannon at <a href=""mailto:nbnug.com@gmail.com?subject=North%20Bay.NET%20User%20Group%20meeting."">nbnug.com@gmail!NO!SP!AM.com</a>.</p>
+<h3 style=""MARGIN-TOP: 5.1pt; TEXT-ALIGN: center"" align=""center"">Event Sponsors<o:p></o:p></h3>
+<p style=""MARGIN-TOP: 5.1pt; TEXT-ALIGN: center"" align=""center""><span id=""Sponsors"">It will be free to attend this meeting, thanks to O'Reilly providing us the facility at no cost. </span></p>
+</span>",0,93,next-nbnug-meeting-subversion-integration-in-visual-studio,2008-04-11 14:29:21.441
+4,Written Requirements vs. On-site Customers,2008-05-25 19:35:28.437,1,Pat Gannon,PatrickJosephGannon@yahoo.com,0,,2008-05-25 19:35:28.437,"<p>I have been reading ""The Art of Agile Development"" by James Shore and Shane Warden, and I just finished the first section (chapters 1-4).  It is a very lucid and pragmatic guide to practicing XP, and I am anxious to put some of these ideas into action.  I must admit that prior to reading this book, I thought that XP teams iteratively encapsulated requirements in stories, and I didn't really grasp the note card concept.  In actuality, each story is merely a brief representation of a bite-sized unit of functionality (used for release planning and tracking), and the detailed requirements are relayed in real time by the on-site customer, and are not written down.  This is an intriguing concept, but I have a lot of questions about how to apply this on the types of projects I tend to work on.  I am hoping the rest of the book will resolve some of these questions.  In this post I'll compare the advantages and disadvantages of an on-site customer versus a requirements document (iteratively developed or written up front).</p>
+<p>There are a few really significant advantages of using an on-site customer (or two or three) on your project.  The first is that the requirements are never out of date.  In a world where businesses are growing and adapting constantly, it is critical that development teams understand and act on the changing requirements of their business with as little lag time as possible.  In short, technical agility enables business agility, and business agility is a big competitive advantage in a dynamic market place.  Furthermore, technical staff (eg. developers) don't waste time writing requirements documents, which are essentially depreciating assets because they become increasingly out-dated over time.  Arguably roughly the same amount of time is spent analyzing requirements over-all, but the time is spent by business stake-holders whose time may be less expensive (because they are employed directly by the client and/or because they are lower-level domain experts with less years of experience than developers in the case of teams large enough to warrant on-site clients in addition to the Product Manager), and whose investment of time analyzing requirements in-depth can be more easily capitalized on by the client organization outside the scope of the current project.  (In-house domain experts are in a good position to recommend process improvements and propose future projects.)  Finally, customers can manage the relative priority of specific features within a story in real-time (like whether or not it's more important to validate a particular piece of data or add a new field, for example), which further enables business agility.</p>
+<p>There are some disadvantages of using on-site customers in liu of writing a requirements document, however.  One disadvantage of particular interest to projects on a tight budget is that offshoring is much less feasible.  Sending an on-site customer half-way around the world for an extended period of time is going to prove too difficult and costly for many organizations to consider.  Attempting to provide a virtual on-site customer over the internet is problematic as well due to the drastic time differences usually present between western clients and eastern development teams.  The situation would seem to prove even more complex for mixed project teams that have some developers on-shore and some developers off-shore.  This would seem to require two on-site customers (one for each site) who would probably spend as much time synchronizing with each other as relaying requirements to the development team.  Another disadvantage is that this method of analyzing requirements would seem to be incompatible with fixed bid projects.  Although I tend not to prefer working on fixed bid projects, they are often a fact of life because they reduce the monetary risk to the client, and they offer a ""price tag"" that is easy for clients to base a purchasing decision on.  When you do a fixed bid project, it is necessary to precisely define the functionality that will be developed for the price offered.  Fixed bid projects put clients and development teams at competing interests; it is in the client's best interest to squeeze every bit of valuable functionality that they can out of the fixed bid project, so in the common case that there is judgement call about what requirements are in-scope and what are not, clients will always strongly air on the side of in-scope.  As such, the more amguity there is in the scope definition, the more work the client will lump into the project they're paying a fixed amount for.  Therefore, a development team must define the scope very precisely in order to stand any chance of having a fixed bid project be profitable (in most situations).  A comprehensive requirements document, while it still may not define scope completely, serves that purpose much better than an on-site client from my perspective.  Finally, in my experience with requirements analysis, when asking business stakeholders about how a particular process should take place, they often realize their process is not as clearly defined as it ought to be, and they must circle the wagons internally in order to clarify the process.  Since that takes time, doing so in the middle of a development effort could cause unexpected delays and thus cause deadlines to be missed (or long hours to be put in at the end of an iteration since clients always seem to think they can provide the answers in the eleventh hour and you ought to be able to automate their process within minutes of their defining that process for you).</p>
+<p>In addition to those disadvantages of on-site customers, there are some advantages to writing requirements documents.  First, it allows problem areas to be exposed up-front, so that related functionality can be implemented first and scheduling risks can be mitigated early on, which is benificial in managing client expectations and forecasting project cost/ROI accurately.  This is true of both iteratively developed requirements documents (developed at the beginning of each iteration) as well as requirements documents written entirely up front (but is more true of the latter).  Another related advantage for requirements documents written entirely up-front is that they enable more precise long-term resource allocation for the development of a strategic project by an important deadline like a trade show (because estimates can be made more accurately for a specific set of critical functionality).  Lastly, up-front requirements documents enable system architects to assess appropriate high-level technology choices prior to project inception.  Although emergent design is a great way to establish a flexible and clean architecture for code-based solutions, it seems less effective for leveraging pre-existing tools or frameworks within the application.  For example, if you define requirements iteratively (or even more so if they're defined continuously as with an on-site customer), you may decide to hand-code certain business logic in an early iteration, and then realize in a future iteration that utilizing BizTalk makes sense to enable the functionality in that iteration, so business logic relating to that functionality should be defined within BizTalk.  At that point, you must either have business logic scattered in multiple sources (some in BizTalk, some in ""code""), or you need to spend time re-creating the existing business logic in BizTalk and removing it from code.  Similarly, you may send out some simple email notifications manually in an early iteration, and then realize in a later iteration that it makes sense to use the (.NET 3.0) Workflow Framework to conditionally send all notifications in the application, at which point you would need to retro-fit your existing notification functionality, which results in a greater total amount of time needed to implement the notification functionality in this fictional project (because requirements were defined iteratively).</p>
+<p>Although I think a lot of projects can benefit from having an on-site customer, there are other project circumstances which demand a traditional requirements document.  Those projects include fixed bid projects, fixed deadline projects, projects utilizing offshore developers and solutions heavily leveraging pre-existing frameworks/middleware/etc.  On-site customers seem to work best in environments meeting the fairly extensive list of pre-requisites to practicing XP on a project: Management Support, Team Agreement, A Colocated Team, (On-Site Customers), The Right Team Size and Use All Practices (Shore: pages 44-49).  Although this list seems prohibitive, the Shore book offers advise about how to change your environment into one that meets the pre-requisites.  Additionally, ""advanced XP"" can still be applied to environments where one or two pre-requisitves may not be satisfied.  For many projects with a less compatible and flexible environment, writing a requirements document (sometimes even up-front) still makes sense.  I may post about this topic again if the rest of the book impacts my opinions on this topic significantly.</p>",0,93,written-requirements-vs.-on-site-customers,2008-05-25 19:35:28.473
+5,Should Developers Learn C?,2008-06-06 10:56:37.492,1,Pat Gannon,PatrickJosephGannon@yahoo.com,0,,2008-06-06 10:56:37.492,"<p>I recently listened to <a href=""http://weblogs.asp.net/jgalloway/archive/2008/06/05/technology-round-table-podcast-3-should-developers-learn-c-teched-2008-keynote-announcements.aspx"">Technology Round Table Podcast #3</a> and one of the topics was 'Should Developers Learn C?'.  In it, <a href=""http://weblogs.asp.net/jgalloway/"">Jon Galloway</a> stated that there are much more important things developers could spend their time learning than C (such as learning their core platform in-depth - eg. .NET/SQL Server).  Another voice (perhaps it was <a href=""http://www.lazycoder.com/weblog/"">Scott Koon</a>?) said that it is necessary for developers to learn about how their code is working 'under the hood' (memory and registers, etc.), and he gave a metaphore that developers who don't know how things are working at that level can only <em>paint your car</em> rather than making more substantive changes.  Although all metaphores break down at some point, I think this is a particularly weak one.  If someone can totally overhaul a system (such as one written in VB or on top of .NET) by making major changes to the code, that amounts to a heck of a lot more (metaphorically speaking) than just re-painting a car, even if they don't know how to interpret assembly or inspect the heap manually if they wind up having an unhandled error in unmanaged code.  (I think a better analogy might be a mechanic who could replace your transmission versus a mechanic who could re-build your transmission.)  Heck, I've taken two classes in assembly (one for x86 chips and one for Motorolla chips) and I normally don't even bother to try to interpret that generated assembly if I somehow get such an error.  I probably could if I had too, but there's normally much more effective ways to debug a problem written in a higher level language than debugging the underlying assembly.  Although I can't say it's NEVER necessary, it hasn't been necessary for me in the 8+ years I've been developing software professionally in high-level languages.</p>
+<p>My first reaction to this discussion was to think: Well it's really not enough to just learn C, you really should learn assembly language first to understand things at a REALLY low level (invoking hardware interrupts, etc.), and then learn C.  In reflecting on Jon's take on the issue, however, I realized that perhaps one size does not fit all.  I wonder if people's opinion on this issue really just reflects their own personal background.  I think I was certainly guilty of that in my first analysis of the question.  (I, after all, learned assembly language and C and C++...)  It seems to me now that this boils down to an issue of human nature.  People that attain some degree of success in life commonly are inclined to encourge people to follow in their foot-steps.  In other words, if I perceive myself as successful, then the path to success that I'm most familiar with is probably going to be my own.  So if one never really had to learn C, but one still perceives oneself as successful, then one is probably going to advocate that it's not really necessary for developers to learn C.  If one forged their software knowledge in the fires of assembly and C, however, one is likely to suggest that as much is necessary for developers to learn.</p>
+<p>I think the more important question is: '<em>Who should learn C?</em>' and furthermore <em>'Who should learn assembly?</em>'  I think the answer lies in what type of software the developer works on, and what direction they would like to take in their career.  As I have <a href=""http://blogs.veloc-it.com/pat/archive/2008/01/30/teaching-computer-science.aspx"">previously blogged</a>, I think there will be more distinct career paths within software development as the field matures.  Like in medicine, we will have the equivelent of doctors/MDs (framework developers, language creators, AI specialists, etc.) and the equivelent of nurses/RNs (developers who work on small line-of-business applications and small web apps) and the equivlent of nursing assistants (junior developers, QA testers, etc.).  Based on that belief, I think that the training necessary for a developer who works on embedded systems or large-scale web app frameworks is different than the training necessary for a developer who works on point-of-presence web sites, just as the training for an MD is entirely different than the training for RNs.  MDs need to be able to diagnose rare, mysterious diseases and come up with a customized plan of treatment for a patient who may have multiple conditions, whereas an RN just needs to know how to diagnose and treat common problems, administer medication, talk to families, etc.  Accordingly, MDs have to study the mechanics of the human body in a lot more detail, whereas RNs learn more about 'soft skills' and the like.</p>
+<p>Should you learn C (or Erlang or Smalltalk)?  That depends on what you want to do.  If you want to work on massively scalable applications or complex embedded systems, then yes, you probably should learn C and also possibly assembly and/or IL.  If you just want to continue creating line of business applications in VB.NET (which is not to say that you're not improving), then you would probably be better off spending your time on something else that will make you a better developer.  (Do I even need to list the plethora of options?)</p>",2,93,should-developers-learn-c,2008-06-06 10:56:37.499
+6,Tip: Creating DB Defaults After The Fact,2008-06-11 12:13:41.521,1,Pat Gannon,PatrickJosephGannon@yahoo.com,0,,2008-06-11 14:51:56.432,"<p>We have all written SQL scripts to create a table that has one or more column defaults, as follows:</p>
+<blockquote dir=""ltr"" style=""MARGIN-RIGHT: 0px"">
+<p>create table MyTable<br />
+(<br />
+     myTableId int primary key identity(1,1),<br />
+     name varchar(100) not null,<br />
+     modifiedOn datetime <strong>default(getdate())</strong>,<br />
+     someOtherDate datetime<br />
+)</p>
+</blockquote>
+<p>That works well, but in some cases, you want to add a default after the fact, and you don't want to drop and re-create the table with the new default (because there is data in the table).  I had this situation today so I decided to load up SQL Books Online and see if I could figure out how to write a SQL script to add a default to an existing table.  (I prefer to keep incremental schema change scripts rather than making schema changes in SQL Server Management Studio, or Enterprise Manager in this case, because it makes it easier to keep multiple environments/DBs in sync.)  I would have expected the syntax to be something like this:</p>
+<blockquote dir=""ltr"" style=""MARGIN-RIGHT: 0px"">
+<p>alter table MyTable add default df_modifiedOn to someOtherDate 'getdate()'</p>
+</blockquote>
+<p>...but it's nothing of the sort.  The syntax is a bit weird, IMO, and here it is:</p>
+<blockquote dir=""ltr"" style=""MARGIN-RIGHT: 0px"">
+<p><font face=""Arial"">create default df_someOtherDate AS 'getdate()'</font></p>
+<p><font face=""Arial"">GO</font></p>
+<p><font face=""Arial"">sp_bindefault df_someOtherDate, 'MyTable.someOtherDate'</font></p>
+<p><font face=""Arial"">GO<br />
+</font></p>
+</blockquote>
+<p><font face=""Arial"">I'd be interested to know if there's other syntax out there for accomplishing the same goal in one SQL statement.  (Post a comment!)</font></p>
+<p><font face=""Arial"">That's all folks!</font></p>
+<p><strong>Update:</strong> As it turns out, the type of default created by using using ""create default"" is a different sort of default than the one you get by specifying ""default"" in a column definition, and the type created by ""create default"" is only maintained in SQL Server for backwards-compatibility.  (In other words, don't do it unless you absolutely have to.)</p>
+<p>I removed the default I created using the above method (using sp_unbindefault and then 'drop default') and then I created a new default by dropping and re-adding the column (so I guess my initial instinct on how to do this was almost correct).</p>
+<blockquote dir=""ltr"" style=""MARGIN-RIGHT: 0px"">
+<p>alter table MyTable drop column someOtherDate</p>
+<p>GO</p>
+<p><font face=""Arial"">alter table MyTable add someOtherDate datetime not null default(getdate())</font></p>
+<p>GO</p>
+</blockquote>
+<p>As it turns out, the data in this particular column is not valuable to me at this point, so dropping and re-adding the column is an acceptable solution.  If you needed to preserve that data, you could dump it into a temporary table before dropping and re-adding, and then dump it back into your regular table from the temporary table.  Is there a simpler way to do this?</p>",0,93,tip-creating-db-defaults-after-the-fact,2008-06-11 12:13:41.527
+7,BDD-style feature tests using IronRuby and RSpec/Cucumber,2008-10-23 00:54:16.475,1,Pat Gannon,PatrickJosephGannon@yahoo.com,0,,2008-10-23 00:54:16.475,"<h3>Introduction</h3>  <p>BDD (<a href=""http://en.wikipedia.org/wiki/Behavior_driven_development"">Behavior Driven Development</a>) is a specialization of TDD (<a href=""http://en.wikipedia.org/wiki/Test-driven_development"">Test Driven Development</a>) that encapsulates a set of best practices espoused by the most successful TDD gurus.  The main theme is focusing on behavior rather than implementation in your tests.  A great tool for verifying behavior (writing BDD-style tests) is <a href=""http://rspec.info/"">RSpec</a>, and now it can be used to test .NET code.</p>  <p>To get more information on BDD, read <a href=""http://dannorth.net/introducing-bdd"">Dan North's Introduction to BDD</a>.  To get some background information on TDD, read Scott Bellware's <a href=""http://web.archive.org/web/20071013075140/http://codebetter.com/blogs/scott.bellware/archive/2005/11/22/134954.aspx"">classic Red-Green-Refactor post</a> or read Kent Beck's <a href=""http://www.amazon.com/Test-Driven-Development-Addison-Wesley-Signature/dp/0321146530"">TDD By Example</a> (this one's on my to-do list, but I've heard great things about it).</p>  <p><a href=""http://rspec.info/"">RSpec</a> is a unit testing tool for <a href=""http://www.ruby-lang.org/en/"">Ruby</a> that provides an internal DSL which supports nice BDD-style specifications.  An example of that syntax is below.</p>  <p> </p>  <p class=""MsoNormal"" style=""tab-stops: 45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt""><span style=""font-size: 10pt; color: #666666; font-family: "" courier=""courier"" new??=""new??""># bowling_spec.rb      <br /></span><span style=""font-size: 10pt; color: #110000; font-family: "" courier=""courier"" new??=""new??"">require </span><span style=""font-size: 10pt; background: #fff0f0; color: #771100; font-family: "" courier=""courier"" new??=""new??"">'</span><span style=""font-size: 10pt; background: #fff0f0; color: #dd2200; font-family: "" courier=""courier"" new??=""new??"">bowling</span><span style=""font-size: 10pt; background: #fff0f0; color: #771100; font-family: "" courier=""courier"" new??=""new??"">'</span><span style=""font-size: 10pt; color: #110000; font-family: "" courier=""courier"" new??=""new??""> </span> </p>  <p></p>  <p></p>  <p class=""MsoNormal"" style=""tab-stops: 45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt""><span style=""font-size: 10pt; color: #110000; font-family: "" courier=""courier"" new??=""new??"">describe </span><b><span style=""font-size: 10pt; color: #003366; font-family: "" courier=""courier"" new??=""new??"">Bowling</span></b><span style=""font-size: 10pt; color: #110000; font-family: "" courier=""courier"" new??=""new??""> </span><b><span style=""font-size: 10pt; color: #008800; font-family: "" courier=""courier"" new??=""new??"">do        <br /></span></b><span style=""font-size: 10pt; color: #110000; font-family: "" courier=""courier"" new??=""new??""><span style=""mso-spacerun: yes"">  </span>before(</span><span style=""font-size: 10pt; color: #aa6600; font-family: "" courier=""courier"" new??=""new??"">:each</span><span style=""font-size: 10pt; color: #110000; font-family: "" courier=""courier"" new??=""new??"">) </span><b><span style=""font-size: 10pt; color: #008800; font-family: "" courier=""courier"" new??=""new??"">do        <br /></span></b><span style=""font-size: 10pt; color: #110000; font-family: "" courier=""courier"" new??=""new??""><span style=""mso-spacerun: yes"">    </span></span><span style=""font-size: 10pt; color: #3333bb; font-family: "" courier=""courier"" new??=""new??"">@bowling</span><span style=""font-size: 10pt; color: #110000; font-family: "" courier=""courier"" new??=""new??""> = </span><b><span style=""font-size: 10pt; color: #003366; font-family: "" courier=""courier"" new??=""new??"">Bowling</span></b><span style=""font-size: 10pt; color: #110000; font-family: "" courier=""courier"" new??=""new??"">.new      <br /></span><span style=""font-size: 10pt; color: #110000; font-family: "" courier=""courier"" new??=""new??""><span style=""mso-spacerun: yes"">  </span></span><b><span style=""font-size: 10pt; color: #008800; font-family: "" courier=""courier"" new??=""new??"">end</span></b><span style=""font-size: 10pt; color: #110000; font-family: "" courier=""courier"" new??=""new??""> </span></p>  <p></p>  <p></p>  <p class=""MsoNormal"" style=""tab-stops: 45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt""><span style=""font-size: 10pt; color: #110000; font-family: "" courier=""courier"" new??=""new??""><span style=""mso-spacerun: yes"">  </span>it </span><span style=""font-size: 10pt; background: #fff0f0; color: #771100; font-family: "" courier=""courier"" new??=""new??"">""</span><span style=""font-size: 10pt; background: #fff0f0; color: #dd2200; font-family: "" courier=""courier"" new??=""new??"">should score 0 for gutter game</span><span style=""font-size: 10pt; background: #fff0f0; color: #771100; font-family: "" courier=""courier"" new??=""new??"">""</span><span style=""font-size: 10pt; color: #110000; font-family: "" courier=""courier"" new??=""new??""> </span><b><span style=""font-size: 10pt; color: #008800; font-family: "" courier=""courier"" new??=""new??"">do        <br /></span></b><span style=""font-size: 10pt; color: #110000; font-family: "" courier=""courier"" new??=""new??""><span style=""mso-spacerun: yes"">    </span></span><b><span style=""font-size: 10pt; color: #0000dd; font-family: "" courier=""courier"" new??=""new??"">20</span></b><span style=""font-size: 10pt; color: #110000; font-family: "" courier=""courier"" new??=""new??"">.times { </span><span style=""font-size: 10pt; color: #3333bb; font-family: "" courier=""courier"" new??=""new??"">@bowling</span><span style=""font-size: 10pt; color: #110000; font-family: "" courier=""courier"" new??=""new??"">.hit(</span><b><span style=""font-size: 10pt; color: #0000dd; font-family: "" courier=""courier"" new??=""new??"">0</span></b><span style=""font-size: 10pt; color: #110000; font-family: "" courier=""courier"" new??=""new??"">) }      <br /></span><span style=""font-size: 10pt; color: #110000; font-family: "" courier=""courier"" new??=""new??""><span style=""mso-spacerun: yes"">    </span></span><span style=""font-size: 10pt; color: #3333bb; font-family: "" courier=""courier"" new??=""new??"">@bowling</span><span style=""font-size: 10pt; color: #110000; font-family: "" courier=""courier"" new??=""new??"">.score.should == </span><b><span style=""font-size: 10pt; color: #0000dd; font-family: "" courier=""courier"" new??=""new??"">0        <br /></span></b><span style=""font-size: 10pt; color: #110000; font-family: "" courier=""courier"" new??=""new??""><span style=""mso-spacerun: yes"">  </span></span><b><span style=""font-size: 10pt; color: #008800; font-family: "" courier=""courier"" new??=""new??"">end        <br /></span></b><b><span style=""font-size: 10pt; color: #008800; font-family: "" courier=""courier"" new??=""new??"">end</span></b></p>  <p class=""MsoNormal"" style=""tab-stops: 45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt""><b><span style=""font-size: 10pt; color: #008800; font-family: "" courier=""courier"" new??=""new??""></span></b></p>  <p class=""MsoNormal"" style=""tab-stops: 45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt""><span style=""font-size: 10pt; color: #110000; font-family: "" courier=""courier"" new??=""new??""></span></p>  <p></p>  <p></p>  <p></p>  <p>RSpec also provides an external DSL (the RSpec Story Runner) that allows you to create executable plain-English feature documentation in the Given/When/Then format typical of BDD tests.  This tool has been broken out into its own project called <a href=""http://github.com/aslakhellesoy/cucumber/wikis"">Cucumber</a>, and an example of the syntax is below (from the RSpec website).</p>  <p> </p>  <pre>Feature: transfer from savings to checking account<br />  As a savings account holder<br />  I want to transfer money from my savings account to my checking account<br />  So that I can get cash easily from an ATM </pre>
+
+<pre><br /><br /><br />  Scenario: savings account has sufficient funds<br />    Given my savings account balance is $100<br />    And my checking account balance is $10<br />    When I transfer $20 from savings to checking<br />    Then my savings account balance should be $80<br />    And my checking account balance should be $30</pre>
+
+<pre> </pre>
+
+<pre>  Scenario: savings account has insufficient funds<br />    Given my savings account balance is $50<br />    And my checking account balance is $10<br />    When I transfer $60 from savings to checking<br />    Then my savings account balance should be $50<br />    And my checking account balance should be $10</pre>
+
+<p> </p>
+
+<p>As the RSpec website says ""Each Given, When and Then is a Step. The Ands are each the same kind as the previous Step. Steps get defined in Ruby like this (detail left out for brevity) in steps.rb (in the same directory in this example):""</p>
+
+<p> </p>
+
+<p><b><span style=""font-size: 10pt; color: #003366; font-family: 'Courier New'""></span></b></p>
+
+<p><b><span style=""font-size: 10pt; color: #003366; font-family: 'Courier New'"">Given</span></b><span style=""font-size: 10pt; color: #110000; font-family: 'Courier New'""> </span><span style=""font-size: 10pt; background: #fff0ff; color: #440044; font-family: 'Courier New'"">/</span><span style=""font-size: 10pt; background: #fff0ff; color: #880088; font-family: 'Courier New'"">^my (.*) account balance is </span><span style=""font-size: 10pt; background: #fff0ff; color: #0044dd; font-family: 'Courier New'"">\$</span><span style=""font-size: 10pt; background: #fff0ff; color: #880088; font-family: 'Courier New'"">(</span><span style=""font-size: 10pt; background: #fff0ff; color: #0044dd; font-family: 'Courier New'"">\d</span><span style=""font-size: 10pt; background: #fff0ff; color: #880088; font-family: 'Courier New'"">+)$</span><span style=""font-size: 10pt; background: #fff0ff; color: #440044; font-family: 'Courier New'"">/</span><span style=""font-size: 10pt; color: #110000; font-family: 'Courier New'""> </span><b><span style=""font-size: 10pt; color: #008800; font-family: 'Courier New'"">do</span></b><span style=""font-size: 10pt; color: #110000; font-family: 'Courier New'""> |account_type, amount| 
+    <br /></span><span style=""font-size: 10pt; color: #110000; font-family: 'Courier New'""><span style=""mso-spacerun: yes"">  </span>create_account(account_type, amount) 
+
+    <br /></span><b><span style=""font-size: 10pt; color: #008800; font-family: 'Courier New'"">end 
+      <br />
+
+      <br /></span></b><b><span style=""font-size: 10pt; color: #003366; font-family: 'Courier New'"">When</span></b><span style=""font-size: 10pt; color: #110000; font-family: 'Courier New'""> </span><span style=""font-size: 10pt; background: #fff0ff; color: #440044; font-family: 'Courier New'"">/</span><span style=""font-size: 10pt; background: #fff0ff; color: #880088; font-family: 'Courier New'"">^I transfer </span><span style=""font-size: 10pt; background: #fff0ff; color: #0044dd; font-family: 'Courier New'"">\$</span><span style=""font-size: 10pt; background: #fff0ff; color: #880088; font-family: 'Courier New'"">(</span><span style=""font-size: 10pt; background: #fff0ff; color: #0044dd; font-family: 'Courier New'"">\d</span><span style=""font-size: 10pt; background: #fff0ff; color: #880088; font-family: 'Courier New'"">+) from (.*) to (.*)$</span><span style=""font-size: 10pt; background: #fff0ff; color: #440044; font-family: 'Courier New'"">/</span><span style=""font-size: 10pt; color: #110000; font-family: 'Courier New'""> </span><b><span style=""font-size: 10pt; color: #008800; font-family: 'Courier New'"">do</span></b><span style=""font-size: 10pt; color: #110000; font-family: 'Courier New'""> |amount, source_account, 
+    <br />target_account| 
+
+    <br /></span><span style=""font-size: 10pt; color: #110000; font-family: 'Courier New'""><span style=""mso-spacerun: yes"">  </span>get_account(source_account).transfer(amount).to(get_account(target_account)) 
+
+    <br /></span><b><span style=""font-size: 10pt; color: #008800; font-family: 'Courier New'"">end 
+      <br /></span></b><span style=""font-size: 10pt; color: #110000; font-family: 'Courier New'""></span></p>
+
+<p>  <br /></p>
+
+<p></p>
+
+<p><b><span style=""font-size: 10pt; color: #003366; font-family: 'Courier New'"">Then</span></b><span style=""font-size: 10pt; color: #110000; font-family: 'Courier New'""> </span><span style=""font-size: 10pt; background: #fff0ff; color: #440044; font-family: 'Courier New'"">/</span><span style=""font-size: 10pt; background: #fff0ff; color: #880088; font-family: 'Courier New'"">^my (.*) account balance should be </span><span style=""font-size: 10pt; background: #fff0ff; color: #0044dd; font-family: 'Courier New'"">\$</span><span style=""font-size: 10pt; background: #fff0ff; color: #880088; font-family: 'Courier New'"">(</span><span style=""font-size: 10pt; background: #fff0ff; color: #0044dd; font-family: 'Courier New'"">\d</span><span style=""font-size: 10pt; background: #fff0ff; color: #880088; font-family: 'Courier New'"">+)$</span><span style=""font-size: 10pt; background: #fff0ff; color: #440044; font-family: 'Courier New'"">/</span><span style=""font-size: 10pt; color: #110000; font-family: 'Courier New'""> </span><b><span style=""font-size: 10pt; color: #008800; font-family: 'Courier New'"">do</span></b><span style=""font-size: 10pt; color: #110000; font-family: 'Courier New'""> |account_type, amount| 
+    <br /></span><span style=""font-size: 10pt; color: #110000; font-family: 'Courier New'""><span style=""mso-spacerun: yes"">  </span>get_account(account_type).should have_a_balance_of(amount) 
+
+    <br /></span><b><span style=""font-size: 10pt; color: #008800; font-family: 'Courier New'"">end</span></b> </p>
+
+<p> </p>
+
+<p></p>
+
+<p><b><span style=""font-size: 10pt; color: #008800; font-family: 'Courier New'""></span></b></p>
+
+<h3>Getting RSpec and Cucumber set up to work with .NET</h3>
+
+<p>The first thing you need to do to start verifying the behavior of .NET code using RSpec is to install <a href=""http://www.ironruby.net/"">IronRuby</a>.  In theory, it's also possible to use RSpec to test .NET code by using <a href=""http://jruby.codehaus.org/"">jRuby</a> and Java's interoperability with .NET, and in fact there's an example of that approach that comes bundled with Cucumber, but I thought this was one too many layers of interoperability (jRuby -&gt; Java -&gt; .NET) for an approach I am going to attempt to use to verify behavior in the majority of code I write.  Also, Cucumber's web site says ""When <a href=""http://www.ironruby.net/"">IronRuby</a> matures it can be used to 'test' .NET code too"", so I took that as a hint that the jRuby way might be problematic in the long run.  Finally, I wanted an excuse to play with IronRuby :-)  To get the latest version of IronRuby, you must install <a href=""http://tortoisesvn.net/downloads"">TortoiseSVN</a> and then do an SVN Checkout from <a title=""http://ironruby.rubyforge.org/svn/trunk"" href=""http://ironruby.rubyforge.org/svn/trunk"">http://ironruby.rubyforge.org/svn/trunk</a>.  Open IronRuby.sln in Visual Studio (telling it to ""Load Projects Normally"" if prompted) and Build Solution.  There is a ZIP of IronRuby you can download from rubyforge also, but that didn't work too well for me, so I wouldn't recommend it.  (I suspect it's a significantly outdated release.)</p>
+
+<p>In order to obtain <a href=""http://github.com/aslakhellesoy/cucumber/wikis"">Cucumber</a> and all its dependencies, download and install the latest version of the <a href=""http://rubyforge.org/frs/?group_id=167&amp;release_id=26150"">Ruby One-Click Installer</a> (henceforth referred to as regular Ruby).  At the command line (from any folder), type ""gem Cucumber"" and answer ""Y"" when it asks you to install each of the dependencies.  The reason that regular Ruby (rather than IronRuby) is used for this step is because I was not able to get <a href=""http://www.rubygems.org/"">RubyGems</a> to work on IronRuby.</p>
+
+<p>Next, copy the contents of all the gems you just downloaded from C:\ruby\lib\ruby\gems\1.8\gems (assuming you installed regular Ruby to C:\ruby) to C:\Projects\IronRuby\trunk\lib (assuming you checked out the IronRuby trunk to C:\Projects\IronRuby\trunk).  A list of the gems you will need to copy is as follows:</p>
+
+<p>cucumber 
+  <br />hoe 
+
+  <br />polyglot 
+
+  <br />rake 
+
+  <br />rubyforge 
+
+  <br />rspec 
+
+  <br />term-ansicolor
+
+  <br />treetop</p>
+
+<p>Note that you will specifically want to copy only the contents of the ""lib"" directory of each of these gems.  (For example, C:\ruby\lib\ruby\gems\1.8\gems\treetop-1.2.4\lib\treetop.rb will be copied to C:\Projects\IronRuby\trunk\lib\treetop.rb and similarly the C:\ruby\lib\ruby\gems\1.8\gems\treetop-1.2.4\lib\treetop folder will be copied to C:\Projects\IronRuby\trunk\lib\treetop.)  Copying the contents of the ""lib"" folder of each of these gems was the only way I could manage to get IronRuby to recognize all of them at the same time.  I have heard that setting the GEM_PATH environment variable to the location where you have put your gems will enable IronRuby to recognize them, but that didn't work for me, which necessitated the kludgy step I just described.</p>
+
+<p>Next, you will need to modify a few files within RSpec and Cucumber to get them to work with IronRuby.  the modifications are as follows (paths are relative to C:\Projects\IronRuby\trunk):</p>
+
+<ul>
+  <li>In lib\cucumber\formatters\pretty_formatter.rb, find the ""source_comment"" method, comment out the body of it, and add simply two double-quotes (an empty string) as the new body of the method.  This is because the executable file location doesn't seem to be available in IronRuby.  (The commented out code is what would normally print the name of the file and the line number of each code definition referred to by the specification.) </li>
+
+  <li>In lib\cucumber\formatters\ansicolor.rb, comment out the first line that says ""gem 'term-ansicolor'"".  (I wasn't able to get ANSI color to work for the output from Cucumber.) </li>
+
+  <li>In lib\cucumber\tree\step.rb, find the ""execute_in"" method and then find the following code: </li>
+</ul>
+
+<p><code>method_line_pos = e.backtrace.index(method_line) 
+    <br />if method_line_pos 
+
+    <br />  strip_pos = method_line_pos - (Pending === e ? PENDING_ADJUSTMENT : REGULAR_ADJUSTMENT) 
+
+    <br />else 
+
+    <br />  # This happens with rails, because they screw up the backtrace 
+
+    <br />  # before we get here (injecting erb stactrace and such) 
+
+    <br />end 
+
+    <br />format_error(strip_pos, proc, e) </code></p>
+
+<ul>
+  <li>and change it to: </li>
+</ul>
+
+<p><code>if e.backtrace 
+    <br />  method_line_pos = e.backtrace.index(method_line) 
+
+    <br />  if method_line_pos 
+
+    <br />    strip_pos = method_line_pos - (Pending === e ? PENDING_ADJUSTMENT : REGULAR_ADJUSTMENT) 
+
+    <br />  else 
+
+    <br />    # This happens with rails, because they screw up the backtrace 
+
+    <br />    # before we get here (injecting erb stactrace and such) 
+
+    <br />  end 
+
+    <br />  format_error(strip_pos, proc, e) 
+
+    <br />else 
+
+    <br />  e.extra_data = format_error2(proc, e) 
+
+    <br />  raise e 
+
+    <br />end          </code></p>
+
+<ul>
+  <li>In lib\spec\expectations\errors.rb, add two properties to the ""ExpectationNotMetError"" class as follows (this step and the last step are necessary because the file name and line are not included with the Exception message in IronRuby as they are in regular Ruby): </li>
+</ul>
+
+<p><code>def extra_data=(value) 
+    <br />  @extra_data = value 
+
+    <br />end </code></p>
+
+<p><code>def message 
+    <br />  to_s + ""\n"" + @extra_data 
+
+    <br />end</code></p>
+
+<p> </p>
+
+<h3>Testing .NET code</h3>
+
+<p>To complete the test, I created a simple C# source file to test called ""Accent.cs"" as follows:</p>
+
+<p class=""MsoNormal"" style=""margin-bottom: 0pt; line-height: normal; mso-layout-grid-align: none""><span style=""font-size: 10pt; color: blue; font-family: "" yes?=""yes?"" mso-no-proof:=""mso-no-proof:"" new?;=""new?;"" courier=""courier"">namespace</span><span style=""font-size: 10pt; font-family: "" yes?=""yes?"" mso-no-proof:=""mso-no-proof:"" new?;=""new?;"" courier=""courier""> TestLibrary 
+    <br /></span><span style=""font-size: 10pt; font-family: "" yes?=""yes?"" mso-no-proof:=""mso-no-proof:"" new?;=""new?;"" courier=""courier"">{ 
+    <br /></span><span style=""font-size: 10pt; font-family: "" yes?=""yes?"" mso-no-proof:=""mso-no-proof:"" new?;=""new?;"" courier=""courier""><span style=""mso-spacerun: yes"">    </span><span style=""color: blue"">public</span> <span style=""color: blue"">class</span> <span style=""color: #2b91af"">Accent 
+      <br /></span></span><span style=""font-size: 10pt; font-family: "" yes?=""yes?"" mso-no-proof:=""mso-no-proof:"" new?;=""new?;"" courier=""courier""><span style=""mso-spacerun: yes"">    </span>{ 
+
+    <br /></span><span style=""font-size: 10pt; font-family: "" yes?=""yes?"" mso-no-proof:=""mso-no-proof:"" new?;=""new?;"" courier=""courier""><span style=""mso-spacerun: yes"">        </span><span style=""color: blue"">private</span> <span style=""color: blue"">readonly</span> <span style=""color: blue"">string</span> _stateAbbreviation; </span>
+
+  <br /></p>
+
+<p></p>
+<span style=""font-size: 10pt; font-family: "" yes?=""yes?"" mso-no-proof:=""mso-no-proof:"" new?;=""new?;"" courier=""courier""><span style=""mso-spacerun: yes"">        </span><span style=""color: blue"">public</span> Accent(<span style=""color: blue"">string</span> stateAbbreviation) 
+
+  <br /></span><span style=""font-size: 10pt; font-family: "" yes?=""yes?"" mso-no-proof:=""mso-no-proof:"" new?;=""new?;"" courier=""courier""><span style=""mso-spacerun: yes"">        </span>{ 
+
+  <br /></span><span style=""font-size: 10pt; font-family: "" yes?=""yes?"" mso-no-proof:=""mso-no-proof:"" new?;=""new?;"" courier=""courier""><span style=""mso-spacerun: yes"">            </span>_stateAbbreviation = stateAbbreviation; 
+
+  <br /></span><span style=""font-size: 10pt; font-family: "" yes?=""yes?"" mso-no-proof:=""mso-no-proof:"" new?;=""new?;"" courier=""courier""><span style=""mso-spacerun: yes"">        </span>} </span>
+
+<p></p>
+
+<p class=""MsoNormal"" style=""margin-bottom: 0pt; line-height: normal; mso-layout-grid-align: none""><span style=""font-size: 10pt; font-family: "" yes?=""yes?"" mso-no-proof:=""mso-no-proof:"" new?;=""new?;"" courier=""courier""><span style=""mso-spacerun: yes"">        </span><span style=""color: blue"">public</span> <span style=""color: blue"">string</span> PronounceWord(<span style=""color: blue"">string</span> word) 
+
+    <br /></span><span style=""font-size: 10pt; font-family: "" yes?=""yes?"" mso-no-proof:=""mso-no-proof:"" new?;=""new?;"" courier=""courier""><span style=""mso-spacerun: yes"">        </span>{ 
+
+    <br /></span><span style=""font-size: 10pt; font-family: "" yes?=""yes?"" mso-no-proof:=""mso-no-proof:"" new?;=""new?;"" courier=""courier""><span style=""mso-spacerun: yes"">            </span><span style=""color: blue"">if</span> (_stateAbbreviation == <span style=""color: #a31515"">""MA""</span>) 
+
+    <br /></span><span style=""font-size: 10pt; font-family: "" yes?=""yes?"" mso-no-proof:=""mso-no-proof:"" new?;=""new?;"" courier=""courier""><span style=""mso-spacerun: yes"">            </span>{ 
+
+    <br /></span><span style=""font-size: 10pt; font-family: "" yes?=""yes?"" mso-no-proof:=""mso-no-proof:"" new?;=""new?;"" courier=""courier""><span style=""mso-spacerun: yes"">                </span><span style=""color: blue"">switch</span> (word) 
+
+    <br /></span><span style=""font-size: 10pt; font-family: "" yes?=""yes?"" mso-no-proof:=""mso-no-proof:"" new?;=""new?;"" courier=""courier""><span style=""mso-spacerun: yes"">                </span>{ 
+
+    <br /></span><span style=""font-size: 10pt; font-family: "" yes?=""yes?"" mso-no-proof:=""mso-no-proof:"" new?;=""new?;"" courier=""courier""><span style=""mso-spacerun: yes"">                    </span><span style=""color: blue"">case</span> <span style=""color: #a31515"">""bar""</span>: 
+
+    <br /></span><span style=""font-size: 10pt; font-family: "" yes?=""yes?"" mso-no-proof:=""mso-no-proof:"" new?;=""new?;"" courier=""courier""><span style=""mso-spacerun: yes"">                        </span><span style=""color: blue"">return</span> <span style=""color: #a31515"">""bah""</span>; 
+
+    <br /></span><span style=""font-size: 10pt; font-family: "" yes?=""yes?"" mso-no-proof:=""mso-no-proof:"" new?;=""new?;"" courier=""courier""><span style=""mso-spacerun: yes"">                    </span><span style=""color: blue"">case</span> <span style=""color: #a31515"">""dollar""</span>: 
+
+    <br /></span><span style=""font-size: 10pt; font-family: "" yes?=""yes?"" mso-no-proof:=""mso-no-proof:"" new?;=""new?;"" courier=""courier""><span style=""mso-spacerun: yes"">       </span><span style=""mso-spacerun: yes"">                 </span><span style=""color: blue"">return</span> <span style=""color: #a31515"">""dolla""</span>; 
+
+    <br /></span><span style=""font-size: 10pt; font-family: "" yes?=""yes?"" mso-no-proof:=""mso-no-proof:"" new?;=""new?;"" courier=""courier""><span style=""mso-spacerun: yes"">                </span>} 
+
+    <br /></span><span style=""font-size: 10pt; font-family: "" yes?=""yes?"" mso-no-proof:=""mso-no-proof:"" new?;=""new?;"" courier=""courier""><span style=""mso-spacerun: yes"">            </span>} </span>
+
+  <br /></p>
+
+<p></p>
+<span style=""font-size: 10pt; font-family: "" yes?=""yes?"" mso-no-proof:=""mso-no-proof:"" new?;=""new?;"" courier=""courier""><span style=""mso-spacerun: yes"">            </span><span style=""color: blue"">return</span> word; 
+
+  <br /></span><span style=""font-size: 10pt; font-family: "" yes?=""yes?"" mso-no-proof:=""mso-no-proof:"" new?;=""new?;"" courier=""courier""><span style=""mso-spacerun: yes"">        </span>} 
+
+  <br /></span><span style=""font-size: 10pt; font-family: "" yes?=""yes?"" mso-no-proof:=""mso-no-proof:"" new?;=""new?;"" courier=""courier""><span style=""mso-spacerun: yes"">    </span>} 
+
+  <br /></span><span style=""font-size: 10pt; font-family: "" yes?=""yes?"" mso-no-proof:=""mso-no-proof:"" new?;=""new?;"" courier=""courier"">} 
+  <p></p>
+</span>
+
+<p></p>
+
+<p class=""MsoNormal""></p>
+
+<p>I compiled that source file into an assembly called ""TestLibrary.dll"" and copied it (and TestLibrary.pdb) to a new folder: C:\Projects\IronRuby\trunk\lib\lib.</p>
+
+<p></p>
+
+<p class=""MsoNormal""></p>
+
+<p>Next, I created a file called cucumber.yml in C:\Projects\IronRuby\trunk\lib with the following contents (copied from the ""calculator"" example provided in Cucumber):</p>
+
+<p></p>
+
+<p class=""MsoNormal""><code>default: --format pretty features</code></p>
+
+<p class=""MsoNormal"">I also created another file (also copied from the ""calculator"" example) called Rakefile with the following contents:</p>
+
+<p>$:.unshift(File.dirname(__FILE__) + '/../../lib') 
+  <br />require 'cucumber/rake/task' </p>
+
+<p><code>Cucumber::Rake::Task.new do |t| 
+    <br />  t.cucumber_opts = ""--profile default"" 
+
+    <br />end</code></p>
+
+<p class=""MsoNormal""></p>
+
+<p>Next, I created a file called pronunciation.feature (a specification) in a new folder: C:\Projects\IronRuby\trunk\lib\features with the following contents:</p>
+
+<p></p>
+
+<p><code>Feature: Pronunciation 
+    <br />  In order to gain the trust of a customer 
+
+    <br />  As a sales representative 
+
+    <br />  I want to pronounce words in the dialect of the customer </code></p>
+
+<p><code>  Scenario: Pronounce a word 
+    <br />    Given My client lives in MA 
+
+    <br />    When I pronounce bar 
+
+    <br />    Then the word should be pronounced bah </code></p>
+
+<p><code>  Scenario: Pronounce a word 
+    <br />    Given My client lives in CA 
+
+    <br />    When I pronounce bar 
+
+    <br />    Then the word should be pronounced bar </code></p>
+
+<p><code>  Scenario: Pronounce a word 
+    <br />    Given My client lives in MA 
+
+    <br />    When I pronounce dollar 
+
+    <br />    Then the word should be pronounced dolla </code></p>
+
+<p><code>  Scenario: Pronounce a word 
+    <br />    Given My client lives in CA 
+
+    <br />    When I pronounce dollar 
+
+    <br />    Then the word should be pronounced dollar </code></p>
+
+<p></p>
+
+<p>Next, I created a file called proncuation_steps.rb (defining the steps in the specification above) in a new folder: C:\Projects\IronRuby\trunk\lib\features\steps with the following contents:</p>
+
+<p><code>require 'spec' 
+    <br />$:.unshift(File.dirname(__FILE__) + '/../../lib') 
+
+    <br />require 'mscorlib' 
+
+    <br />require 'TestLibrary' 
+
+    <br />
+
+    <br />Before do 
+
+    <br />end 
+
+    <br />
+
+    <br />After do 
+
+    <br />end 
+
+    <br />
+
+    <br />Given ""My client lives in $state"" do |state| 
+
+    <br />    @accent = TestLibrary::Accent.new state 
+
+    <br />end 
+
+    <br />
+
+    <br />When /I pronounce (\w+)/ do |word| 
+
+    <br />  @result = @accent.PronounceWord word 
+
+    <br />end 
+
+    <br />
+
+    <br />Then /the word should be pronounced (.*)/ do |result| 
+
+    <br />  @result.to_s.should == result.to_s 
+
+    <br />end
+
+    <br /></code></p>
+
+<p>Finally, I created two files in C:\Projects\IronRuby\trunk\build\debug. The first of them is icuc.rb, which contains the following:</p>
+
+<p><code>require 'cucumber' 
+    <br />require 'cucumber/cli' 
+
+    <br />
+
+    <br />Cucumber::CLI.execute</code></p>
+
+<p>The second file is icuc.bat, which contains the following:</p>
+
+<p><code>@echo off 
+    <br />set IRONRUBY=c:\Projects\IronRuby\trunk 
+
+    <br />pushd %IRONRUBY%\lib 
+
+    <br />%IRONRUBY%\build\Debug\ir %IRONRUBY%\build\Debug\icuc.rb 
+
+    <br />popd 
+
+    <br />set IRONRUBY=</code></p>
+
+<p>These two files are the equivalent of the ""cucumber"" and ""cucumber.cmd"" files in C:\ruby\bin.  You can now type ""icuc"" at a command prompt and it will run the Cucumber test you just created, which should pass!  I chose the name ""icuc"" so that it wouldn't conflict with the ""cucumber"" command in regular Ruby.  Happy testing, er... I mean verifying! ;-)</p>
+
+<p>If you have any trouble getting this to work for you, or if you know of a better way to do it, please leave a comment!  I know this method is less than ideal, so I'm hoping one of you can help me improve it. :-)</p>",7,93,bdd-style-feature-tests-using-ironruby-and-rspeccucumber,2008-10-23 00:54:16.480
+8,Migrating TFS: Point your build server at the new TFS server,2009-01-14 23:44:43.431,1,Pat Gannon,PatrickJosephGannon@yahoo.com,0,,2009-01-14 23:44:43.431,"<h3>The Migration</h3>  <p>Today I finished migrating TFS from a VM to a newly re-purposed machine.  The VM was on an overloaded host box and TFS was a bit sluggish.  Yesterday, I followed Microsoft's painstaking instructions on <a href=""http://msdn.microsoft.com/en-us/library/ms404869.aspx"">How to Move Your Team Foundation Server from One Hardware Configuration To Another</a>.  This morning I updated our TFS build scripts so that all the file paths were valid on the new box, and then I refreshed the Version Control Cache on the build server by using the ""tf workspaces /s:<a href=""http://ApplicationTierServerName:Port"">http://ApplicationTierServerName:Port</a>"" command (the colon after the ""/s"" is a needed variation on the command given in Microsoft's instructions on <a href=""http://msdn.microsoft.com/en-us/library/cc716728.aspx"">How to Refresh the Data Caches on Client Computers</a>).  To my dismay, when I ran a build, it failed almost immediately with an error indicating it was trying to access something like vstfs:///Version_Control/Versioned_Items, and the build notification window on the build server still showed the old TFS server name.  I poked around the various TFS databases and a few other places to see if I could find the old server name, but I did not (or at least not anywhere relevant).  I decided to have a look at the .config file being used by the Visual Studio Team Foundation Build service executable, and there was a setting in there for a TFS server URI, but the value was blank.  The comment above the setting indicates that it overrides the setting in the registry under ""HKCU"".  I figured that if the old server name was in the registry, I would prefer to update that than override it with the new server name.  (No point in having old server names lurking around.)</p>  <h3>Re-configuring TFS Build</h3>  <p>After a quick search in the registry (using regedt32 of course), I found the ""AllowedTeamServer"" key in HKEY_CURRENT_USER\Software\Microsoft\VisualStudio\9.0\TeamFoundation\Build\Service, and it was set to the old TFS server URI.  I updated this setting (always exercise caution when modifying your registry!) to be the URI of the new TFS server (<a href=""http://[server]:8080/"">http://[server]:8080/</a>), and then I re-started the Visual Studio Team Foundation Build service, and voila! the next build I kicked off succeeded.  Unfortunately the build notification window on the build server still shows the old TFS server name, but I don't anticipate that being a problem.</p>  <h3>Retrospective</h3>  <p>Over-all, Microsoft's aforementioned <a href=""http://msdn.microsoft.com/en-us/library/ms404869.aspx"">instructions for migrating TFS to a new server</a> worked pretty well (after muddling through the usual smattering of security issues), but the fact that properly re-configuring TFS Build to point to a new TFS server (which one would think would be a somewhat common operation, if not frequent, per se) requires a ""reg hack"" is a little annoying to me, and the fact that this step is not documented in the migration instructions is a significant over-sight.</p>  <div class=""wlWriterSmartContent"" id=""scid:0767317B-992E-4b12-91E0-4F059A8CECA8:599bfbef-4f98-4242-b94c-2f99f3c3f8f9"" style=""padding-right: 0px; display: inline; padding-left: 0px; padding-bottom: 0px; margin: 0px; padding-top: 0px"">del.icio.us Tags: <a href=""http://del.icio.us/popular/tfs"" rel=""tag"">tfs</a>,<a href=""http://del.icio.us/popular/build"" rel=""tag"">build</a>,<a href=""http://del.icio.us/popular/tfsbuild_customization"" rel=""tag"">tfsbuild_customization</a>,<a href=""http://del.icio.us/popular/tfbuild"" rel=""tag"">tfbuild</a>,<a href=""http://del.icio.us/popular/teamfoundationserver"" rel=""tag"">teamfoundationserver</a>,<a href=""http://del.icio.us/popular/teamsystem"" rel=""tag"">teamsystem</a>,<a href=""http://del.icio.us/popular/continuousintegration"" rel=""tag"">continuousintegration</a></div>",0,93,migrating-tfs-point-your-build-server-at-the-new-tfs,2009-01-14 23:44:43.432
+9,Upgrading our site to MVC RC,2009-02-05 22:22:44.521,1,Pat Gannon,PatrickJosephGannon@yahoo.com,0,,2009-02-05 22:22:44.521,"<p>At <a href=""http://www.hsihealth.com"">work</a>, we have a web application implemented using the <a href=""http://www.asp.net/mvc/"">ASP.NET MVC</a> Framework.  This week, I upgraded that site from MVC beta to <a href=""http://www.microsoft.com/downloads/details.aspx?FamilyID=f4e4ee26-4bc5-41ed-80c9-261336b2a5b6&amp;displaylang=en"">MVC Release Candidate</a>.  The <a href=""http://www.microsoft.com/downloads/info.aspx?na=46&amp;p=1&amp;SrcDisplayLang=en&amp;SrcCategoryId=&amp;SrcFamilyId=f4e4ee26-4bc5-41ed-80c9-261336b2a5b6&amp;u=http%3a%2f%2fdownload.microsoft.com%2fdownload%2f8%2fF%2fF%2f8FF09794-DC16-4B0B-A11F-B69DA49B89DE%2fASP.NET+MVC+-+RC+Release+Notes.doc&amp;oRef=http%3a%2f%2fwww.asp.net%2fmvc%2f&quot;"">release notes</a> had some important information about editing the web.config so that you don't need a code-behind for your views, but all it tells you about upgrading the rest of your code-base is that you should upgrade the MVC assemblies that your application is referencing and then fix the compiler errors.  Even after reading about the various changes in the RC, I still had a little trouble figuring out how to adapt our code to work with the various breaking changes, so I figured I would outline some of the issues I ran into here, and how I resolved them, to save you some time if you haven't gotten around to doing this upgrade yet.  Here goes...</p>  <ul>   <li>ModelBinderResult no longer exists.  BindModel() should now take a ControllerContext as well as a ModelBindingContext parameter, and it should return the model itself, rather than wrapping it in a ModelBinderResult</li>    <li>IValueProvider went away - use FormCollection instead to retrieve form values</li>    <li>The value provider parameter to UpdateModel is now of type IDictionary&lt;string, ValueProviderResult&gt;, rather than IValueProvider (since IValueProvider no longer exists).  You must call ToValueProvider() on your FormCollection and pass that to UpdateModel.</li>    <li>ModelBindingContext no longer has a ""Controller"" property.  If you're trying to access that from the BindModel method in a model binder, access it from the new ControllerContext parameter instead.</li>    <li>ModelBindingContext.ValueProvider is now of type IDictionary&lt;string, ValueProviderResult&gt; (not IValueProvider since that no longer exists), so any places where you're calling GetValue() on that, you will need to replace it with a call to the indexer (eg. bindingContext.ValueProvider[fieldName] instead of bindingContext.ValueProvider.GetValue(fieldName)).  Also note that when you attempt to obtain a value from a generic Dictionary for a key that does not exist, you will get a KeyNotFoundException, whereas GetValue() simply returned null, so you will need to add a check that the key exists before retrieving a value from the collection.</li>    <li>The ModelBindingContext constructor now takes zero arguments instead of seven.  If you're instantiating a ModelBindingContext in a unit test, rather than passing everything in on the constructor, you'll want to set     <br /> the ValueProvider, ModelType and Model properties (the controller is no longer set on the ModelBindingContext - its set in the ControllerContext, and all the other constructor parameters we were passing null for).</li>    <li>RedirectToRouteResult.Values is now RedirectToRouteResult.RouteValues</li> </ul>  <p> </p>  <p>Good luck and God speed!</p>  <p> </p>  <div class=""wlWriterSmartContent"" id=""scid:0767317B-992E-4b12-91E0-4F059A8CECA8:550bed62-0a64-4abf-8045-2a32ba6cd715"" style=""padding-right: 0px; display: inline; padding-left: 0px; padding-bottom: 0px; margin: 0px; padding-top: 0px"">del.icio.us Tags: <a href=""http://del.icio.us/popular/asp.net"" rel=""tag"">asp.net</a>,<a href=""http://del.icio.us/popular/.net"" rel=""tag"">.net</a>,<a href=""http://del.icio.us/popular/framework"" rel=""tag"">framework</a>,<a href=""http://del.icio.us/popular/patterns"" rel=""tag"">patterns</a>,<a href=""http://del.icio.us/popular/mvc"" rel=""tag"">mvc</a></div>",0,93,upgrading-our-site-to-mvc-rc,2009-02-05 22:22:44.524
+10,Rendering a diff in a web page,2009-04-08 00:05:06.445,1,Pat Gannon,PatrickJosephGannon@yahoo.com,0,,2009-04-08 00:05:06.445,"<p>Recently in my spare time, I have been working on a web site where developers can post code snippets which they would like to be reviewed by other developers on the web.  Once a code snippet has been posted, other developers can add comments and make a revised version of the code snippet, which will be rendered under the original code snippet as a diff (the difference between the original snippet and the revised snippet).  I have registered myself <a href=""http://www.codenuggets.net/"">a domain</a>, but the site is not ready to be launched yet.  This post is about how I rendered a line-oriented diff in an ASP.NET MVC web page.  I'll write another post to announce the site itself when I launch it.</p>  <p><a href=""http://www.patrickgannon.net/Images/Renderingadiffinawebpage_14380/Diff.jpg"" target=""_blank""><img style=""border-top-width: 0px; border-left-width: 0px; border-bottom-width: 0px; border-right-width: 0px"" height=""142"" alt=""The diffUI"" src=""http://www.patrickgannon.net/Images/Renderingadiffinawebpage_14380/Diff_thumb.jpg"" width=""244"" border=""0"" /></a> </p>  <p> </p>  <h3>The Algorithm</h3>  <p>After a brief period of trying to figure out my own algorithm for rendering a diff, I decided to do some research on how others have solved the problem.  It seems that it's not quite as easy of a problem to solve as it would seem on the surface, and there has actually been a fair amount of in-depth research done on how to solve it.  I wound up deciding to use <a href=""http://blog.menees.com/"">Bill Menee</a>'s <a href=""http://www.menees.com/"">Menees diff library</a>, which uses the popular Myers algorithm, described in the paper <a href=""http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.4.6927"">An O(ND) Difference Algorithm and its Variations</a> by Eugene W. Myers.  The paper looks fascinating, and I might be interested in implementing it myself at some point, but for the moment I'm going to use the Menees library.  Here is the abstract to the paper, to give you an overview of how Myers solves the problem.</p>  <blockquote>   <p><em>The problems of finding a longest common subsequence of two sequences A and B and a shortest edit script        <br />for transforming A into B have long been known to be dual problems. In this paper, they are shown to be         <br />equivalent to finding a shortest/longest path in an edit graph. Using this perspective, a simple O(ND) time         <br />and space algorithm is developed where N is the sum of the lengths of A and B and D is the size of the         <br />minimum edit script for A and B. The algorithm performs well when differences are small (sequences are         <br />similar) and is consequently fast in typical applications. The algorithm is shown to have O(N+D2 )         <br />expected-time performance under a basic stochastic model. A refinement of the algorithm requires only         <br />O(N) space, and the use of suffix trees leads to an O(NlgN +D2 ) time variation.</em></p> </blockquote>  <h3>The Code</h3>  <p>Here's the code that I came up with to render a diff created by the Menees library.</p>  <p>The model and view-data:</p>  <div class=""csharpcode"">   <pre><span class=""lnum"">   1:  </span><span class=""kwrd"">using</span> System;</pre>
+
+  <pre><span class=""lnum"">   2:  </span><span class=""kwrd"">using</span> System.Collections;</pre>
+
+  <pre><span class=""lnum"">   3:  </span><span class=""kwrd"">using</span> System.Collections.Generic;</pre>
+
+  <pre><span class=""lnum"">   4:  </span><span class=""kwrd"">using</span> System.Linq;</pre>
+
+  <pre><span class=""lnum"">   5:  </span><span class=""kwrd"">using</span> System.Text;</pre>
+
+  <pre><span class=""lnum"">   6:  </span><span class=""kwrd"">using</span> System.Web;</pre>
+
+  <pre><span class=""lnum"">   7:  </span> </pre>
+
+  <pre><span class=""lnum"">   8:  </span><span class=""kwrd"">using</span> Menees.DiffUtils;</pre>
+
+  <pre><span class=""lnum"">   9:  </span> </pre>
+
+  <pre><span class=""lnum"">  10:  </span><span class=""kwrd"">namespace</span> CodeReview.Models</pre>
+
+  <pre><span class=""lnum"">  11:  </span>{</pre>
+
+  <pre><span class=""lnum"">  12:  </span>    <span class=""rem"">/// &lt;summary&gt;</span></pre>
+
+  <pre><span class=""lnum"">  13:  </span>    <span class=""rem"">/// Represents a chunk of source code</span></pre>
+
+  <pre><span class=""lnum"">  14:  </span>    <span class=""rem"">/// &lt;/summary&gt;</span></pre>
+
+  <pre><span class=""lnum"">  15:  </span>    <span class=""kwrd"">public</span> <span class=""kwrd"">class</span> SourceCode</pre>
+
+  <pre><span class=""lnum"">  16:  </span>    {</pre>
+
+  <pre><span class=""lnum"">  17:  </span>        <span class=""kwrd"">public</span> <span class=""kwrd"">int</span> Id { get; set; }</pre>
+
+  <pre><span class=""lnum"">  18:  </span> </pre>
+
+  <pre><span class=""lnum"">  19:  </span>        <span class=""kwrd"">private</span> <span class=""kwrd"">string</span> _title = <span class=""kwrd"">string</span>.Empty;</pre>
+
+  <pre><span class=""lnum"">  20:  </span> </pre>
+
+  <pre><span class=""lnum"">  21:  </span>        <span class=""kwrd"">public</span> <span class=""kwrd"">string</span> Title </pre>
+
+  <pre><span class=""lnum"">  22:  </span>        {</pre>
+
+  <pre><span class=""lnum"">  23:  </span>            get</pre>
+
+  <pre><span class=""lnum"">  24:  </span>            {</pre>
+
+  <pre><span class=""lnum"">  25:  </span>                <span class=""kwrd"">return</span> _title;</pre>
+
+  <pre><span class=""lnum"">  26:  </span>            }</pre>
+
+  <pre><span class=""lnum"">  27:  </span>            set</pre>
+
+  <pre><span class=""lnum"">  28:  </span>            {</pre>
+
+  <pre><span class=""lnum"">  29:  </span>                _title = <span class=""kwrd"">value</span>;</pre>
+
+  <pre><span class=""lnum"">  30:  </span>            }</pre>
+
+  <pre><span class=""lnum"">  31:  </span>        }</pre>
+
+  <pre><span class=""lnum"">  32:  </span> </pre>
+
+  <pre><span class=""lnum"">  33:  </span>        <span class=""kwrd"">public</span> <span class=""kwrd"">string</span> Description { get; set; }</pre>
+
+  <pre><span class=""lnum"">  34:  </span>        <span class=""kwrd"">public</span> <span class=""kwrd"">string</span> Code { get; set; }</pre>
+
+  <pre><span class=""lnum"">  35:  </span>        <span class=""kwrd"">public</span> <span class=""kwrd"">string</span> CreatedBy { get; set; }</pre>
+
+  <pre><span class=""lnum"">  36:  </span>        <span class=""kwrd"">public</span> List&lt;Comment&gt; Comments { get; set; }</pre>
+
+  <pre><span class=""lnum"">  37:  </span> </pre>
+
+  <pre><span class=""lnum"">  38:  </span>        <span class=""kwrd"">private</span> List&lt;<span class=""kwrd"">string</span>&gt; _lines = <span class=""kwrd"">null</span>;</pre>
+
+  <pre><span class=""lnum"">  39:  </span>        </pre>
+
+  <pre><span class=""lnum"">  40:  </span>        <span class=""kwrd"">public</span> List&lt;<span class=""kwrd"">string</span>&gt; Lines</pre>
+
+  <pre><span class=""lnum"">  41:  </span>        {</pre>
+
+  <pre><span class=""lnum"">  42:  </span>            get</pre>
+
+  <pre><span class=""lnum"">  43:  </span>            {</pre>
+
+  <pre><span class=""lnum"">  44:  </span>                <span class=""kwrd"">if</span> (_lines == <span class=""kwrd"">null</span>)</pre>
+
+  <pre><span class=""lnum"">  45:  </span>                    _lines = GetLines(Code);</pre>
+
+  <pre><span class=""lnum"">  46:  </span> </pre>
+
+  <pre><span class=""lnum"">  47:  </span>                <span class=""kwrd"">return</span> _lines;</pre>
+
+  <pre><span class=""lnum"">  48:  </span>            }</pre>
+
+  <pre><span class=""lnum"">  49:  </span>        }</pre>
+
+  <pre><span class=""lnum"">  50:  </span> </pre>
+
+  <pre><span class=""lnum"">  51:  </span>        <span class=""kwrd"">public</span> <span class=""kwrd"">bool</span> IsValid</pre>
+
+  <pre><span class=""lnum"">  52:  </span>        {</pre>
+
+  <pre><span class=""lnum"">  53:  </span>            get { <span class=""kwrd"">return</span> (GetRuleViolations().Count() == 0); }</pre>
+
+  <pre><span class=""lnum"">  54:  </span>        }</pre>
+
+  <pre><span class=""lnum"">  55:  </span> </pre>
+
+  <pre><span class=""lnum"">  56:  </span>        <span class=""kwrd"">public</span> SourceCode(<span class=""kwrd"">string</span> code)</pre>
+
+  <pre><span class=""lnum"">  57:  </span>            : <span class=""kwrd"">this</span>()</pre>
+
+  <pre><span class=""lnum"">  58:  </span>        {</pre>
+
+  <pre><span class=""lnum"">  59:  </span>            Code = code;</pre>
+
+  <pre><span class=""lnum"">  60:  </span>        }</pre>
+
+  <pre><span class=""lnum"">  61:  </span> </pre>
+
+  <pre><span class=""lnum"">  62:  </span>        <span class=""kwrd"">public</span> SourceCode()</pre>
+
+  <pre><span class=""lnum"">  63:  </span>        {</pre>
+
+  <pre><span class=""lnum"">  64:  </span>            Comments = <span class=""kwrd"">new</span> List&lt;Comment&gt;();</pre>
+
+  <pre><span class=""lnum"">  65:  </span>        }</pre>
+
+  <pre><span class=""lnum"">  66:  </span> </pre>
+
+  <pre><span class=""lnum"">  67:  </span>        <span class=""kwrd"">public</span> List&lt;Difference&gt; Diff(SourceCode compareWith)</pre>
+
+  <pre><span class=""lnum"">  68:  </span>        {</pre>
+
+  <pre><span class=""lnum"">  69:  </span>            List&lt;Difference&gt; differences = <span class=""kwrd"">new</span> List&lt;Difference&gt;();</pre>
+
+  <pre><span class=""lnum"">  70:  </span>            IList a = Lines;</pre>
+
+  <pre><span class=""lnum"">  71:  </span>            IList b = compareWith.Lines;</pre>
+
+  <pre><span class=""lnum"">  72:  </span>            TextDiff diff = <span class=""kwrd"">new</span> TextDiff((<span class=""kwrd"">int</span>)HashType.HashCode, <span class=""kwrd"">false</span>, <span class=""kwrd"">false</span>, 0);</pre>
+
+  <pre><span class=""lnum"">  73:  </span>            EditScript script = diff.Execute(a, b);</pre>
+
+  <pre><span class=""lnum"">  74:  </span> </pre>
+
+  <pre><span class=""lnum"">  75:  </span>            <span class=""kwrd"">foreach</span> (Edit edit <span class=""kwrd"">in</span> script)</pre>
+
+  <pre><span class=""lnum"">  76:  </span>            {</pre>
+
+  <pre><span class=""lnum"">  77:  </span>                differences.Add(ConvertEditToDifference(edit, compareWith));</pre>
+
+  <pre><span class=""lnum"">  78:  </span>            }</pre>
+
+  <pre><span class=""lnum"">  79:  </span> </pre>
+
+  <pre><span class=""lnum"">  80:  </span>            <span class=""kwrd"">return</span> differences;</pre>
+
+  <pre><span class=""lnum"">  81:  </span>        }</pre>
+
+  <pre><span class=""lnum"">  82:  </span> </pre>
+
+  <pre><span class=""lnum"">  83:  </span>        <span class=""kwrd"">private</span> List&lt;<span class=""kwrd"">string</span>&gt; GetLines(<span class=""kwrd"">string</span> code)</pre>
+
+  <pre><span class=""lnum"">  84:  </span>        {</pre>
+
+  <pre><span class=""lnum"">  85:  </span>            <span class=""kwrd"">return</span> code.Split(<span class=""str"">'\n'</span>).ToList();</pre>
+
+  <pre><span class=""lnum"">  86:  </span>        }</pre>
+
+  <pre><span class=""lnum"">  87:  </span> </pre>
+
+  <pre><span class=""lnum"">  88:  </span>        <span class=""kwrd"">private</span> Difference ConvertEditToDifference(Edit edit, SourceCode compareWith)</pre>
+
+  <pre><span class=""lnum"">  89:  </span>        {</pre>
+
+  <pre><span class=""lnum"">  90:  </span>            <span class=""kwrd"">return</span> <span class=""kwrd"">new</span> Difference()</pre>
+
+  <pre><span class=""lnum"">  91:  </span>            {</pre>
+
+  <pre><span class=""lnum"">  92:  </span>                LineNumber = edit.StartA + 1,</pre>
+
+  <pre><span class=""lnum"">  93:  </span>                Text = GetChangeText(edit, compareWith),</pre>
+
+  <pre><span class=""lnum"">  94:  </span>                Type = ConvertEditTypeToDifferenceType(edit.Type),</pre>
+
+  <pre><span class=""lnum"">  95:  </span>                NumberOfLines = edit.Length</pre>
+
+  <pre><span class=""lnum"">  96:  </span>            };</pre>
+
+  <pre><span class=""lnum"">  97:  </span>        }</pre>
+
+  <pre><span class=""lnum"">  98:  </span> </pre>
+
+  <pre><span class=""lnum"">  99:  </span>        <span class=""kwrd"">private</span> <span class=""kwrd"">string</span> GetChangeText(Edit edit, SourceCode compareWith)</pre>
+
+  <pre><span class=""lnum""> 100:  </span>        {</pre>
+
+  <pre><span class=""lnum""> 101:  </span>            StringBuilder changeText = <span class=""kwrd"">new</span> StringBuilder();</pre>
+
+  <pre><span class=""lnum""> 102:  </span>            SourceCode textSource;</pre>
+
+  <pre><span class=""lnum""> 103:  </span>            <span class=""kwrd"">int</span> lineNumberInTextSource;</pre>
+
+  <pre><span class=""lnum""> 104:  </span> </pre>
+
+  <pre><span class=""lnum""> 105:  </span>            <span class=""kwrd"">if</span> (edit.Type == EditType.Insert)</pre>
+
+  <pre><span class=""lnum""> 106:  </span>            {</pre>
+
+  <pre><span class=""lnum""> 107:  </span>                textSource = compareWith;</pre>
+
+  <pre><span class=""lnum""> 108:  </span>                lineNumberInTextSource = edit.StartB;</pre>
+
+  <pre><span class=""lnum""> 109:  </span>            }</pre>
+
+  <pre><span class=""lnum""> 110:  </span>            <span class=""kwrd"">else</span></pre>
+
+  <pre><span class=""lnum""> 111:  </span>            {</pre>
+
+  <pre><span class=""lnum""> 112:  </span>                textSource = <span class=""kwrd"">this</span>;</pre>
+
+  <pre><span class=""lnum""> 113:  </span>                lineNumberInTextSource = edit.StartA;</pre>
+
+  <pre><span class=""lnum""> 114:  </span>            }</pre>
+
+  <pre><span class=""lnum""> 115:  </span> </pre>
+
+  <pre><span class=""lnum""> 116:  </span>            <span class=""kwrd"">for</span> (<span class=""kwrd"">int</span> i = 0; i &lt; edit.Length; i++)</pre>
+
+  <pre><span class=""lnum""> 117:  </span>            {</pre>
+
+  <pre><span class=""lnum""> 118:  </span>                changeText.Append(textSource.Lines[lineNumberInTextSource + i]);</pre>
+
+  <pre><span class=""lnum""> 119:  </span>            }</pre>
+
+  <pre><span class=""lnum""> 120:  </span> </pre>
+
+  <pre><span class=""lnum""> 121:  </span>            <span class=""kwrd"">return</span> changeText.ToString();</pre>
+
+  <pre><span class=""lnum""> 122:  </span>        }</pre>
+
+  <pre><span class=""lnum""> 123:  </span> </pre>
+
+  <pre><span class=""lnum""> 124:  </span>        <span class=""kwrd"">private</span> DifferenceType ConvertEditTypeToDifferenceType(EditType editType)</pre>
+
+  <pre><span class=""lnum""> 125:  </span>        {</pre>
+
+  <pre><span class=""lnum""> 126:  </span>            <span class=""kwrd"">switch</span> (editType)</pre>
+
+  <pre><span class=""lnum""> 127:  </span>            {</pre>
+
+  <pre><span class=""lnum""> 128:  </span>                <span class=""kwrd"">case</span> EditType.Change:</pre>
+
+  <pre><span class=""lnum""> 129:  </span>                    <span class=""kwrd"">return</span> DifferenceType.Change;</pre>
+
+  <pre><span class=""lnum""> 130:  </span>                <span class=""kwrd"">case</span> EditType.Delete:</pre>
+
+  <pre><span class=""lnum""> 131:  </span>                    <span class=""kwrd"">return</span> DifferenceType.Removal;</pre>
+
+  <pre><span class=""lnum""> 132:  </span>                <span class=""kwrd"">case</span> EditType.Insert:</pre>
+
+  <pre><span class=""lnum""> 133:  </span>                    <span class=""kwrd"">return</span> DifferenceType.Addition;</pre>
+
+  <pre><span class=""lnum""> 134:  </span>                <span class=""kwrd"">default</span>:</pre>
+
+  <pre><span class=""lnum""> 135:  </span>                    <span class=""kwrd"">throw</span> <span class=""kwrd"">new</span> ArgumentException(<span class=""str"">""Unexpected edit type: ""</span> + editType, <span class=""str"">""editType""</span>);</pre>
+
+  <pre><span class=""lnum""> 136:  </span>            }</pre>
+
+  <pre><span class=""lnum""> 137:  </span>        }</pre>
+
+  <pre><span class=""lnum""> 138:  </span> </pre>
+
+  <pre><span class=""lnum""> 139:  </span>        <span class=""kwrd"">public</span> IEnumerable&lt;RuleViolation&gt; GetRuleViolations()</pre>
+
+  <pre><span class=""lnum""> 140:  </span>        {</pre>
+
+  <pre><span class=""lnum""> 141:  </span>            <span class=""kwrd"">if</span> (String.IsNullOrEmpty(Title))</pre>
+
+  <pre><span class=""lnum""> 142:  </span>                <span class=""kwrd"">yield</span> <span class=""kwrd"">return</span> <span class=""kwrd"">new</span> RuleViolation(<span class=""str"">""Title is required""</span>, <span class=""str"">""Title""</span>);</pre>
+
+  <pre><span class=""lnum""> 143:  </span> </pre>
+
+  <pre><span class=""lnum""> 144:  </span>            <span class=""kwrd"">if</span> (String.IsNullOrEmpty(Code))</pre>
+
+  <pre><span class=""lnum""> 145:  </span>                <span class=""kwrd"">yield</span> <span class=""kwrd"">return</span> <span class=""kwrd"">new</span> RuleViolation(<span class=""str"">""Code is required""</span>, <span class=""str"">""Code""</span>);</pre>
+
+  <pre><span class=""lnum""> 146:  </span> </pre>
+
+  <pre><span class=""lnum""> 147:  </span>            <span class=""kwrd"">yield</span> <span class=""kwrd"">break</span>;</pre>
+
+  <pre><span class=""lnum""> 148:  </span>        }</pre>
+
+  <pre><span class=""lnum""> 149:  </span> </pre>
+
+  <pre><span class=""lnum""> 150:  </span>        <span class=""kwrd"">private</span> <span class=""kwrd"">void</span> Validate()</pre>
+
+  <pre><span class=""lnum""> 151:  </span>        {</pre>
+
+  <pre><span class=""lnum""> 152:  </span>            <span class=""kwrd"">if</span> (!IsValid)</pre>
+
+  <pre><span class=""lnum""> 153:  </span>                <span class=""kwrd"">throw</span> <span class=""kwrd"">new</span> ApplicationException(<span class=""str"">""Rule violations prevent saving""</span>);</pre>
+
+  <pre><span class=""lnum""> 154:  </span>        }</pre>
+
+  <pre><span class=""lnum""> 155:  </span>    }</pre>
+
+  <pre><span class=""lnum""> 156:  </span> </pre>
+
+  <pre><span class=""lnum""> 157:  </span>    <span class=""kwrd"">public</span> <span class=""kwrd"">class</span> Difference</pre>
+
+  <pre><span class=""lnum""> 158:  </span>    {</pre>
+
+  <pre><span class=""lnum""> 159:  </span>        <span class=""kwrd"">public</span> DifferenceType Type { get; set; }</pre>
+
+  <pre><span class=""lnum""> 160:  </span>        <span class=""kwrd"">public</span> <span class=""kwrd"">string</span> Text { get; set; }</pre>
+
+  <pre><span class=""lnum""> 161:  </span>        <span class=""kwrd"">public</span> <span class=""kwrd"">int</span> LineNumber { get; set; }</pre>
+
+  <pre><span class=""lnum""> 162:  </span>        <span class=""kwrd"">public</span> <span class=""kwrd"">int</span> NumberOfLines { get; set; }</pre>
+
+  <pre><span class=""lnum""> 163:  </span>    }</pre>
+
+  <pre><span class=""lnum""> 164:  </span>}</pre>
+
+  <pre><span class=""lnum""> 165:  </span> </pre>
+
+  <pre><span class=""lnum""> 166:  </span><span class=""kwrd"">namespace</span> CodeReview.ViewData</pre>
+
+  <pre><span class=""lnum""> 167:  </span>{</pre>
+
+  <pre><span class=""lnum""> 168:  </span>    <span class=""kwrd"">public</span> <span class=""kwrd"">class</span> ShowSourceCodeViewData</pre>
+
+  <pre><span class=""lnum""> 169:  </span>    {</pre>
+
+  <pre><span class=""lnum""> 170:  </span>        <span class=""kwrd"">public</span> <span class=""kwrd"">string</span> RenderedOriginal { get; set; }</pre>
+
+  <pre><span class=""lnum""> 171:  </span>        <span class=""kwrd"">public</span> List&lt;CommentViewData&gt; Comments { get; set; }</pre>
+
+  <pre><span class=""lnum""> 172:  </span> </pre>
+
+  <pre><span class=""lnum""> 173:  </span>        <span class=""kwrd"">public</span> ShowSourceCodeViewData()</pre>
+
+  <pre><span class=""lnum""> 174:  </span>        {</pre>
+
+  <pre><span class=""lnum""> 175:  </span>            Comments = <span class=""kwrd"">new</span> List&lt;CommentViewData&gt;();</pre>
+
+  <pre><span class=""lnum""> 176:  </span>        }</pre>
+
+  <pre><span class=""lnum""> 177:  </span>    }</pre>
+
+  <pre><span class=""lnum""> 178:  </span> </pre>
+
+  <pre><span class=""lnum""> 179:  </span>    <span class=""kwrd"">public</span> <span class=""kwrd"">class</span> CommentViewData</pre>
+
+  <pre><span class=""lnum""> 180:  </span>    {</pre>
+
+  <pre><span class=""lnum""> 181:  </span>        <span class=""kwrd"">public</span> <span class=""kwrd"">string</span> RenderedOriginal { get; set; }</pre>
+
+  <pre><span class=""lnum""> 182:  </span>        <span class=""kwrd"">public</span> <span class=""kwrd"">string</span> RenderedRevised { get; set; }</pre>
+
+  <pre><span class=""lnum""> 183:  </span>        <span class=""kwrd"">public</span> <span class=""kwrd"">string</span> Text { get; set; }</pre>
+
+  <pre><span class=""lnum""> 184:  </span>    }</pre>
+
+  <pre><span class=""lnum""> 185:  </span>}</pre>
+
+  <pre><span class=""lnum""> 186:  </span> </pre>
+</div>
+
+<p></p><style type=""text/css""><![CDATA[
+.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, ""Courier New"", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }]]></style>
+
+<p>The controller action and supporting methods:</p>
+
+<div class=""csharpcode"">
+  <pre><span class=""lnum"">   1:  </span>        <span class=""kwrd"">public</span> ActionResult Show(<span class=""kwrd"">int</span>? id)</pre>
+
+  <pre><span class=""lnum"">   2:  </span>        {</pre>
+
+  <pre><span class=""lnum"">   3:  </span>            SourceCode original = _repository.GetById(id.Value);</pre>
+
+  <pre><span class=""lnum"">   4:  </span>            <span class=""kwrd"">string</span>[] originalLines = original.Lines.ToArray();</pre>
+
+  <pre><span class=""lnum"">   5:  </span>            ShowSourceCodeViewData viewData = <span class=""kwrd"">new</span> ShowSourceCodeViewData();</pre>
+
+  <pre><span class=""lnum"">   6:  </span> </pre>
+
+  <pre><span class=""lnum"">   7:  </span>            viewData.RenderedOriginal = ConvertFromPlainTextToHtml(original.Code);</pre>
+
+  <pre><span class=""lnum"">   8:  </span> </pre>
+
+  <pre><span class=""lnum"">   9:  </span>            <span class=""kwrd"">foreach</span> (Comment comment <span class=""kwrd"">in</span> original.Comments)</pre>
+
+  <pre><span class=""lnum"">  10:  </span>            {</pre>
+
+  <pre><span class=""lnum"">  11:  </span>                StringBuilder originalBuilder = <span class=""kwrd"">new</span> StringBuilder(); <span class=""rem"">//the buffer for displaying the original version (on the left side of the diff)</span></pre>
+
+  <pre><span class=""lnum"">  12:  </span>                StringBuilder editedBuilder = <span class=""kwrd"">new</span> StringBuilder(); <span class=""rem"">//the buffer for displaying the revised version (on the right side of the diff)</span></pre>
+
+  <pre><span class=""lnum"">  13:  </span>                <span class=""kwrd"">string</span>[] editedLines = comment.Revision.Lines.ToArray();</pre>
+
+  <pre><span class=""lnum"">  14:  </span>                List&lt;Difference&gt; differences = original.Diff(comment.Revision);</pre>
+
+  <pre><span class=""lnum"">  15:  </span>                <span class=""kwrd"">int</span> originalLineNumber = 0;</pre>
+
+  <pre><span class=""lnum"">  16:  </span>                <span class=""kwrd"">int</span> editedLineNumber = 0;</pre>
+
+  <pre><span class=""lnum"">  17:  </span>                CommentViewData commentViewData = <span class=""kwrd"">new</span> CommentViewData();</pre>
+
+  <pre><span class=""lnum"">  18:  </span> </pre>
+
+  <pre><span class=""lnum"">  19:  </span>                <span class=""kwrd"">foreach</span> (Difference difference <span class=""kwrd"">in</span> differences)</pre>
+
+  <pre><span class=""lnum"">  20:  </span>                {</pre>
+
+  <pre><span class=""lnum"">  21:  </span>                    <span class=""rem"">//put all unchanged lines leading up to this difference into both buffers</span></pre>
+
+  <pre><span class=""lnum"">  22:  </span>                    <span class=""kwrd"">for</span> (; originalLineNumber &lt; (difference.LineNumber - 1); originalLineNumber++, editedLineNumber++)</pre>
+
+  <pre><span class=""lnum"">  23:  </span>                    {</pre>
+
+  <pre><span class=""lnum"">  24:  </span>                        originalBuilder.Append(RenderLineHtml(DifferenceType.NoChange, originalLineNumber, originalLines[originalLineNumber]));</pre>
+
+  <pre><span class=""lnum"">  25:  </span>                        editedBuilder.Append(RenderLineHtml(DifferenceType.NoChange, editedLineNumber, editedLines[editedLineNumber]));</pre>
+
+  <pre><span class=""lnum"">  26:  </span>                    }</pre>
+
+  <pre><span class=""lnum"">  27:  </span> </pre>
+
+  <pre><span class=""lnum"">  28:  </span>                    <span class=""kwrd"">if</span> (difference.Type == DifferenceType.Addition)</pre>
+
+  <pre><span class=""lnum"">  29:  </span>                    {</pre>
+
+  <pre><span class=""lnum"">  30:  </span>                        <span class=""kwrd"">string</span> differenceText = difference.Text;</pre>
+
+  <pre><span class=""lnum"">  31:  </span> </pre>
+
+  <pre><span class=""lnum"">  32:  </span>                        <span class=""kwrd"">if</span> (differenceText.EndsWith(<span class=""str"">""\r""</span>))</pre>
+
+  <pre><span class=""lnum"">  33:  </span>                            differenceText = differenceText.Substring(0, differenceText.Length - 1);</pre>
+
+  <pre><span class=""lnum"">  34:  </span> </pre>
+
+  <pre><span class=""lnum"">  35:  </span>                        <span class=""kwrd"">string</span>[] lines = differenceText.Split(<span class=""str"">'\r'</span>);</pre>
+
+  <pre><span class=""lnum"">  36:  </span> </pre>
+
+  <pre><span class=""lnum"">  37:  </span>                        <span class=""rem"">//put added lines only into the buffer for the revised version, and add blank space to the buffer for the original version</span></pre>
+
+  <pre><span class=""lnum"">  38:  </span>                        <span class=""kwrd"">foreach</span> (<span class=""kwrd"">string</span> line <span class=""kwrd"">in</span> lines)</pre>
+
+  <pre><span class=""lnum"">  39:  </span>                        {</pre>
+
+  <pre><span class=""lnum"">  40:  </span>                            editedBuilder.Append(RenderLineHtml(difference.Type, editedLineNumber, line));</pre>
+
+  <pre><span class=""lnum"">  41:  </span>                            originalBuilder.AppendLine();</pre>
+
+  <pre><span class=""lnum"">  42:  </span>                            editedLineNumber++;</pre>
+
+  <pre><span class=""lnum"">  43:  </span>                        }</pre>
+
+  <pre><span class=""lnum"">  44:  </span>                    }</pre>
+
+  <pre><span class=""lnum"">  45:  </span> </pre>
+
+  <pre><span class=""lnum"">  46:  </span>                    <span class=""kwrd"">if</span> (difference.Type == DifferenceType.Removal)</pre>
+
+  <pre><span class=""lnum"">  47:  </span>                    {</pre>
+
+  <pre><span class=""lnum"">  48:  </span>                        <span class=""kwrd"">string</span> differenceText = difference.Text;</pre>
+
+  <pre><span class=""lnum"">  49:  </span> </pre>
+
+  <pre><span class=""lnum"">  50:  </span>                        <span class=""kwrd"">if</span> (differenceText.EndsWith(<span class=""str"">""\r""</span>))</pre>
+
+  <pre><span class=""lnum"">  51:  </span>                            differenceText = differenceText.Substring(0, differenceText.Length - 1);</pre>
+
+  <pre><span class=""lnum"">  52:  </span> </pre>
+
+  <pre><span class=""lnum"">  53:  </span>                        <span class=""kwrd"">string</span>[] lines = differenceText.Split(<span class=""str"">'\r'</span>);</pre>
+
+  <pre><span class=""lnum"">  54:  </span> </pre>
+
+  <pre><span class=""lnum"">  55:  </span>                        <span class=""rem"">//put removed lines only into the buffer for the original version, and add blank space to the buffer for the revised version</span></pre>
+
+  <pre><span class=""lnum"">  56:  </span>                        <span class=""kwrd"">foreach</span> (<span class=""kwrd"">string</span> line <span class=""kwrd"">in</span> lines)</pre>
+
+  <pre><span class=""lnum"">  57:  </span>                        {</pre>
+
+  <pre><span class=""lnum"">  58:  </span>                            originalBuilder.Append(RenderLineHtml(difference.Type, originalLineNumber, line));</pre>
+
+  <pre><span class=""lnum"">  59:  </span>                            editedBuilder.AppendLine();</pre>
+
+  <pre><span class=""lnum"">  60:  </span>                            originalLineNumber++;</pre>
+
+  <pre><span class=""lnum"">  61:  </span>                        }</pre>
+
+  <pre><span class=""lnum"">  62:  </span>                    }</pre>
+
+  <pre><span class=""lnum"">  63:  </span> </pre>
+
+  <pre><span class=""lnum"">  64:  </span>                    <span class=""kwrd"">if</span> (difference.Type == DifferenceType.Change)</pre>
+
+  <pre><span class=""lnum"">  65:  </span>                    {</pre>
+
+  <pre><span class=""lnum"">  66:  </span>                        <span class=""rem"">//put revised version of changed line into buffer for revised version</span></pre>
+
+  <pre><span class=""lnum"">  67:  </span>                        editedBuilder.Append(RenderLineHtml(difference.Type, editedLineNumber, editedLines[editedLineNumber]));</pre>
+
+  <pre><span class=""lnum"">  68:  </span>                        <span class=""rem"">//put original version of changed line into buffer for original version</span></pre>
+
+  <pre><span class=""lnum"">  69:  </span>                        originalBuilder.Append(RenderLineHtml(difference.Type, originalLineNumber, difference.Text));</pre>
+
+  <pre><span class=""lnum"">  70:  </span>                        editedLineNumber++;</pre>
+
+  <pre><span class=""lnum"">  71:  </span>                        originalLineNumber++;</pre>
+
+  <pre><span class=""lnum"">  72:  </span>                    }</pre>
+
+  <pre><span class=""lnum"">  73:  </span>                }</pre>
+
+  <pre><span class=""lnum"">  74:  </span> </pre>
+
+  <pre><span class=""lnum"">  75:  </span>                <span class=""rem"">//put all remaining unchanged lines into buffer for original version</span></pre>
+
+  <pre><span class=""lnum"">  76:  </span>                <span class=""kwrd"">for</span> (<span class=""kwrd"">int</span> i = originalLineNumber; i &lt; originalLines.Length; i++)</pre>
+
+  <pre><span class=""lnum"">  77:  </span>                    originalBuilder.Append(RenderLineHtml(DifferenceType.NoChange, i, originalLines[i]));</pre>
+
+  <pre><span class=""lnum"">  78:  </span> </pre>
+
+  <pre><span class=""lnum"">  79:  </span>                <span class=""rem"">//put all remaining unchanged lines into buffer for revised version</span></pre>
+
+  <pre><span class=""lnum"">  80:  </span>                <span class=""kwrd"">for</span> (<span class=""kwrd"">int</span> i = editedLineNumber; i &lt; editedLines.Length; i++)</pre>
+
+  <pre><span class=""lnum"">  81:  </span>                    editedBuilder.Append(RenderLineHtml(DifferenceType.NoChange, i, editedLines[i]));</pre>
+
+  <pre><span class=""lnum"">  82:  </span> </pre>
+
+  <pre><span class=""lnum"">  83:  </span>                commentViewData.RenderedOriginal = ConvertFromPlainTextToHtml(originalBuilder.ToString());</pre>
+
+  <pre><span class=""lnum"">  84:  </span>                commentViewData.RenderedRevised = ConvertFromPlainTextToHtml(editedBuilder.ToString());</pre>
+
+  <pre><span class=""lnum"">  85:  </span>                commentViewData.Text = comment.Text;</pre>
+
+  <pre><span class=""lnum"">  86:  </span> </pre>
+
+  <pre><span class=""lnum"">  87:  </span>                viewData.Comments.Add(commentViewData);</pre>
+
+  <pre><span class=""lnum"">  88:  </span>            }</pre>
+
+  <pre><span class=""lnum"">  89:  </span> </pre>
+
+  <pre><span class=""lnum"">  90:  </span>            <span class=""kwrd"">return</span> View(viewData);</pre>
+
+  <pre><span class=""lnum"">  91:  </span>        }</pre>
+
+  <pre><span class=""lnum"">  92:  </span> </pre>
+
+  <pre><span class=""lnum"">  93:  </span>        <span class=""kwrd"">private</span> <span class=""kwrd"">string</span> ConvertFromPlainTextToHtml(<span class=""kwrd"">string</span> plainText)</pre>
+
+  <pre><span class=""lnum"">  94:  </span>        {</pre>
+
+  <pre><span class=""lnum"">  95:  </span>            <span class=""kwrd"">return</span> plainText.Replace(<span class=""str"">""\r""</span>, <span class=""str"">""&lt;br/&gt;""</span>).Replace(<span class=""str"">""\n""</span>, <span class=""str"">""""</span>).Replace(<span class=""str"">""  ""</span>, <span class=""str"">""&amp;nbsp;&amp;nbsp;""</span>);</pre>
+
+  <pre><span class=""lnum"">  96:  </span>        }</pre>
+
+  <pre><span class=""lnum"">  97:  </span> </pre>
+
+  <pre><span class=""lnum"">  98:  </span>        <span class=""kwrd"">private</span> <span class=""kwrd"">string</span> RenderLineHtml(DifferenceType differenceType, <span class=""kwrd"">int</span> lineNumber, <span class=""kwrd"">string</span> lineText)</pre>
+
+  <pre><span class=""lnum"">  99:  </span>        {</pre>
+
+  <pre><span class=""lnum""> 100:  </span>            <span class=""rem"">//the line will be styled according to the type of change that was made</span></pre>
+
+  <pre><span class=""lnum""> 101:  </span>            <span class=""kwrd"">return</span> <span class=""kwrd"">string</span>.Format(<span class=""str"">""&lt;div class=\""{0}\""&gt;{1}: {2}&lt;/div&gt;""</span>, differenceType.ToString().ToLower(), lineNumber, lineText);</pre>
+
+  <pre><span class=""lnum""> 102:  </span>        }</pre>
+</div>
+<style type=""text/css""><![CDATA[
+
+
+.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, ""Courier New"", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }]]></style>
+
+<p> </p>
+
+<p>The view:</p>
+
+<div class=""csharpcode"">
+  <pre><div class=""csharpcode""><pre><span class=""lnum"">   1:  </span><span class=""asp"">&lt;%</span></pre><pre><span class=""lnum"">   2:  </span>    <span class=""kwrd"">foreach</span> (CommentViewData comment <span class=""kwrd"">in</span> Model.Comments)</pre><pre><span class=""lnum"">   3:  </span>    {</pre><pre><span class=""lnum"">   4:  </span><span class=""asp"">%&gt;</span></pre><pre><span class=""lnum"">   5:  </span>    <span class=""kwrd"">&lt;</span><span class=""html"">p</span> <span class=""attr"">class</span><span class=""kwrd"">=""comment_body""</span><span class=""kwrd"">&gt;</span></pre><pre><span class=""lnum"">   6:  </span>        <span class=""asp"">&lt;%</span>= comment.Text <span class=""asp"">%&gt;</span></pre><pre><span class=""lnum"">   7:  </span>    <span class=""kwrd"">&lt;/</span><span class=""html"">p</span><span class=""kwrd"">&gt;</span></pre><pre><span class=""lnum"">   8:  </span>    <span class=""kwrd"">&lt;</span><span class=""html"">div</span> <span class=""attr"">class</span><span class=""kwrd"">=""editingArea""</span><span class=""kwrd"">&gt;</span></pre><pre><span class=""lnum"">   9:  </span>        <span class=""kwrd"">&lt;</span><span class=""html"">div</span> <span class=""attr"">class</span><span class=""kwrd"">=""originalCode""</span><span class=""kwrd"">&gt;</span></pre><pre><span class=""lnum"">  10:  </span>            Original:<span class=""kwrd"">&lt;</span><span class=""html"">br</span> <span class=""kwrd"">/&gt;</span></pre><pre><span class=""lnum"">  11:  </span>            <span class=""asp"">&lt;%</span>= comment.RenderedOriginal <span class=""asp"">%&gt;</span></pre><pre><span class=""lnum"">  12:  </span>        <span class=""kwrd"">&lt;/</span><span class=""html"">div</span><span class=""kwrd"">&gt;</span></pre><pre><span class=""lnum"">  13:  </span>        <span class=""kwrd"">&lt;</span><span class=""html"">div</span> <span class=""attr"">class</span><span class=""kwrd"">=""editedCode""</span><span class=""kwrd"">&gt;</span></pre><pre><span class=""lnum"">  14:  </span>            Edited:<span class=""kwrd"">&lt;</span><span class=""html"">br</span> <span class=""kwrd"">/&gt;</span></pre><pre><span class=""lnum"">  15:  </span>            <span class=""asp"">&lt;%</span>= comment.RenderedRevised <span class=""asp"">%&gt;</span></pre><pre><span class=""lnum"">  16:  </span>        <span class=""kwrd"">&lt;/</span><span class=""html"">div</span><span class=""kwrd"">&gt;</span></pre><pre><span class=""lnum"">  17:  </span>        <span class=""kwrd"">&lt;</span><span class=""html"">div</span> <span class=""attr"">style</span><span class=""kwrd"">=""height: 500px""</span><span class=""kwrd"">&gt;&lt;/</span><span class=""html"">div</span><span class=""kwrd"">&gt;</span></pre><pre><span class=""lnum"">  18:  </span>    <span class=""kwrd"">&lt;/</span><span class=""html"">div</span><span class=""kwrd"">&gt;</span></pre><pre><span class=""lnum"">  19:  </span><span class=""asp"">&lt;%</span></pre><pre><span class=""lnum"">  20:  </span>    }</pre><pre><span class=""lnum"">  21:  </span><span class=""asp"">%&gt;</span></pre></div><style type=""text/css""><![CDATA[csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, ""Courier New"", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+]]></style><pre> </pre><pre>The CSS:</pre></pre>
+</div>
+
+<p><code>.originalCode { float: left; border: thin solid black; padding: 10px 10px 10px 10px; width: 450px; } </code></p>
+
+<p><code>.editedCode { float: right; border: thin solid black; padding: 10px 10px 10px 10px; position: absolute; left: 600px; width: 450px; } </code></p>
+
+<p><code>.editingArea { } </code></p>
+
+<p><code>.addition { background-color: Black; color: green } </code></p>
+
+<p><code>.removal { background-color: Black; color: red } </code></p>
+
+<p><code>.change { background-color: Black; color: white } </code></p>
+
+<p><code>.comment_body { font-style: italic; font-weight: bold; } </code></p>
+
+<p><code>.comment_header { font-weight: bold; } </code></p>
+
+<p><code>#Title { width: 700px; } </code></p>
+
+<p><code>#Description { width: 700px; height: 150px; } </code></p>
+
+<p><code>#Code { width: 700px; height: 300px; } </code></p>
+
+<p><code></code></p>
+
+<p>This is going to need some work before it's ready for prime time (the HTML conversion and CSS need work, and the controller method should be broken out into smaller methods, perhaps using a command pattern or something, etc.), but I figured it was enough to get you going if you're thinking about implementing something like this yourself.  (This approach could make for some very nice build notification emails, IMO.)  Did I leave anything important out?  Is there a better or easier way to do this?  Is there a glaring bug?  Leave a comment!</p>
+
+<div class=""wlWriterSmartContent"" id=""scid:0767317B-992E-4b12-91E0-4F059A8CECA8:b54fe025-6f69-434c-9ade-d1b707ef7d50"" style=""padding-right: 0px; display: inline; padding-left: 0px; padding-bottom: 0px; margin: 0px; padding-top: 0px"">del.icio.us Tags: <a href=""http://del.icio.us/popular/.NET"" rel=""tag"">.NET</a>,<a href=""http://del.icio.us/popular/asp.net"" rel=""tag"">asp.net</a>,<a href=""http://del.icio.us/popular/mvc"" rel=""tag"">mvc</a>,<a href=""http://del.icio.us/popular/algorithms"" rel=""tag"">algorithms</a>,<a href=""http://del.icio.us/popular/diff"" rel=""tag"">diff</a></div>",0,93,rendering-a-diff-in-a-web-page,2009-04-08 00:05:06.448
+11,Presenting at NBNUG on 4/21: Developing REST Web Services using WCF,2009-04-18 17:51:15.435,1,Pat Gannon,PatrickJosephGannon@yahoo.com,0,,2009-04-18 17:51:15.435,"<p>I am demonstrating how to create a REST-based web service using WCF at the upcoming NBNUG meeting.  Here is the abstract:</p>  <p>Tuesday, 4/21/2009, meeting at 7:00 PM</p>  <p>O'Reilly Media in Sebastopol </p>  <p><a name=""WhereWhenField1""></a>1003-1005 Gravenstein Highway North, Sebastopol    <br />Tarsier Conference Room (between Building B and Building C)    <br />(8 miles west of Santa Rosa) </p>  <p><a name=""DescriptionField""></a>The presenter will walk through a working REST-based web service (and client), implemented with WCF (Windows Communication Foundation). We will discuss the underlying principles of REST (Representational State Transfer), the motivations for it, and how to create that style of web service using WCF. We will discuss how you can secure these type of web services and finally, we will briefly touch on ADO.NET Data Services (formerly known as Astoria): a technology that automatically exposes a REST web service layer on top of a Linq data source.</p>",2,93,presenting-at-nbnug-on-421-developing-rest-web-services-using,2009-04-18 17:51:15.438
+12,Developing REST Web Services using WCF - Presentation materials,2009-04-22 22:48:21.460,1,Pat Gannon,PatrickJosephGannon@yahoo.com,0,,2009-04-22 22:48:21.460,"<p>As promised in the presentation I did last night for NBNUG, here is my slide deck and sample code for my REST/WCF presentation.  As I mentioned in the presentation, the sample code is purposefully not well-factored, so as not to obscure the core concepts that the code is demonstrating.  The sample code is not at all meant to convey architectural best practices for WCF-based applications, it's essentially an illustration to get folks started working with this technology.</p>  <p>   </p><div class=""wlWriterSmartContent"" id=""scid:fb3a1972-4489-4e52-abe7-25a00bb07fdf:5cafb7ec-4bbe-4fb9-aa86-680635a378dc"" style=""padding-right: 0px; display: inline; padding-left: 0px; padding-bottom: 0px; margin: 0px; padding-top: 0px""><p> <a href=""http://www.patrickgannon.net/Images/DevelopingRESTWebServicesusingWCFPresent_13F95/DevelopingRESTWebServicesusingWCF.ppt"" target=""_blank"">Slide Deck</a><br /> <a href=""http://www.patrickgannon.net/Images/DevelopingRESTWebServicesusingWCFPresent_13F95/RESTDemo.zip"" target=""_blank"">Sample Code</a></p></div>   <div class=""wlWriterSmartContent"" id=""scid:0767317B-992E-4b12-91E0-4F059A8CECA8:62840abe-ef26-4e86-bfdc-33452523a6d3"" style=""padding-right: 0px; display: inline; padding-left: 0px; padding-bottom: 0px; margin: 0px; padding-top: 0px"">del.icio.us Tags: <a href=""http://del.icio.us/popular/WCF"" rel=""tag"">WCF</a>,<a href=""http://del.icio.us/popular/REST"" rel=""tag"">REST</a>,<a href=""http://del.icio.us/popular/.NET"" rel=""tag"">.NET</a>,<a href=""http://del.icio.us/popular/Web%20Services"" rel=""tag"">Web Services</a></div>",4,93,developing-rest-web-services-using-wcf---presentation-materials,2009-04-22 22:48:21.461
+13,Presenting on REST/WCF in the South Bay,2009-06-01 22:10:33.441,1,Pat Gannon,PatrickJosephGannon@yahoo.com,0,,2009-06-01 22:10:33.441,"<p>I am doing my <a href=""http://www.patrickgannon.net/archive/2009/04/18/presenting-at-nbnug-on-421-developing-rest-web-services-using.aspx"">Developing REST Web Services using WCF</a> presentation again for the South Bay chapter of the <a href=""http://www.baynetug.org/"">Bay.NET</a> user group.  It will be Wednesday, June 3rd at the Microsoft’s Silicon Valley conference center at 1065 La Avenida St, Mountain View, CA (Building 1 - room number is still TBD).</p>",0,93,presenting-on-restwcf-in-the-south-bay,2009-06-01 22:10:33.444
+14,Updated Presentation Materials: Developing REST Web Services using WCF,2009-06-16 19:28:13.461,1,Pat Gannon,PatrickJosephGannon@yahoo.com,0,,2009-06-16 19:28:13.461,"<p>Here are the presentation materials that were slightly revised for the second time I grave the WCF/REST presentation (on June 3rd in the South Bay).  Sorry for the delay!</p>  <div style=""padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; display: inline; padding-top: 0px"" id=""scid:fb3a1972-4489-4e52-abe7-25a00bb07fdf:c366043b-619f-42d0-ba0a-d726c75c3760"" class=""wlWriterSmartContent""><p> <a href=""http://www.patrickgannon.net/Images/UpdatedPresentationMaterialsDevelopingRE_11174/RESTDemo.zip"" target=""_blank"">RESTDemo.zip</a></p></div>",0,93,updated-presentation-materials-developing-rest-web-services-using-wcf,2009-06-16 19:28:13.465
+15,Getting ActiveRecord and NHibernate Working in Medium Trust,2009-06-23 22:31:18.525,1,Pat Gannon,PatrickJosephGannon@yahoo.com,0,,2009-06-23 22:31:18.525,"<p>I have spent the last couple of hours trying to figure out how to get <a href=""http://www.castleproject.org/activerecord/index.html"">Castle ActiveRecord</a> working in <a href=""http://help.godaddy.com/article/1039"">medium trust</a> (using <a href=""http://www.godaddy.com"">GoDaddy</a>), and I have finally succeeded (for my purposes).</p>  <p>Here are the steps I had to take to get this working:</p>  <p> </p>  <p>* Re-built ActiveRecord to allow partially trusted callers, which entails the following steps: (thanks to <a href=""http://forum.castleproject.org/viewtopic.php?t=1439"">this thread on the Castle Project forums</a>)</p>  <blockquote>   <p>1. Do an SVN Checkout on the Castle project trunk using <a href=""http://tortoisesvn.tigris.org/"">TortoiseSVN</a> or <a href=""http://subversion.tigris.org/"">Subversion</a>. The repository is here: <a title=""http://svn.castleproject.org:8080/svn/castle/trunk"" href=""http://svn.castleproject.org:8080/svn/castle/trunk"">http://svn.castleproject.org:8080/svn/castle/trunk</a></p>    <p>2. Navigate to the root directory of the Castle project on your machine and enter the following command:</p>    <p>SharedLibs\build\NAnt\bin\nant -t:net-3.5 -D:assembly.allow-partially-trusted-callers=true</p>    <p>Naturally, the build fails (running unit tests), but I was none-the-less able to get the updated DLLs I needed from the build\net-3.5\debug directory under the Castle directory.  I updated all the ActiveRecord-related DLLs (and NHibernate, etc.) that my app was using from the release version of ActiveRecord to this newly-compiled version.  It also now needs Iese.Collections.dll and NHibernate.ByteCode.Castle.dll</p>    <p>3. I added the following line to my ActiveRecord configuration file (appconfig.xml), which is required by newer versions of NHibernate (thanks to <a href=""http://nhforge.org/blogs/nhibernate/archive/2008/11/09/nh2-1-0-bytecode-providers.aspx"">these instructions on NHForge</a>):</p>    <p>&lt;add key=""proxyfactory.factory_class"" value=""NHibernate.ByteCode.Castle.ProxyFactoryFactory, NHibernate.ByteCode.Castle"" /&gt; </p> </blockquote>  <p>* Enable <a href=""http://msdn.microsoft.com/en-us/library/system.security.allowpartiallytrustedcallersattribute.aspx"">AllowPartiallyTrustedCallers</a> by adding the following code to AssemblyInfo.cs:</p>  <p>[assembly: System.Security.AllowPartiallyTrustedCallers]</p>  <p> </p>  <p>* Place this line after your call to ActiveRecordStarter.Initialize(...): (thanks to <a href=""http://nhforge.org/wikis/howtonh/run-in-medium-trust.aspx"">these instructions on NHForge</a>)    <br />NHibernate.Cfg.Environment.UseReflectionOptimizer = false;</p>  <p> </p>  <p>Apparently getting Lazy Loading to work in Medium Trust is even harder, but there is apparently a tool available called <a href=""http://blog.symbiotic-development.com/2008/03/22/nhibernate-proxy-generator/"">NHibernate Proxy Generator</a> that will enable that to work, although it entails generating proxies at compile-time because Reflection is not allowed under Medium Trust.  Here is the tale of an individual who was apparently able to get this to work: <a title=""http://blechie.com/WPierce/archive/2008/02/17/Lazy-Loading-with-nHibernate-Under-Medium-Trust.aspx"" href=""http://blechie.com/WPierce/archive/2008/02/17/Lazy-Loading-with-nHibernate-Under-Medium-Trust.aspx"">http://blechie.com/WPierce/archive/2008/02/17/Lazy-Loading-with-nHibernate-Under-Medium-Trust.aspx</a>  At present, I don't need lazy-loading in the application that I'm running in Medium Trust, so I haven't tried it.</p>  <p> </p>  <p>Good luck!  Leave a comment if this worked for you, or if you have any problems.</p>",2,93,getting-activerecord-and-nhibernate-working-in-medium-trust,2009-06-23 22:31:19.431
+16,Troubleshooting Non-Reproducible Bugs in Visual Studio 2010,2009-11-07 00:16:08.513,1,Pat Gannon,PatrickJosephGannon@yahoo.com,0,,2009-11-07 00:16:08.513,"<p>There are two new features in Visual Studio 2010 that help developers troubleshoot bugs that can't be easily reproduced.  One is IntelliTrace, which seems like it will be of limited usefulness to me because it can’t be done remotely, but it might be more useful for teams that have a dedicated QA staff and/or don't practice TDD.  On the other hand, I watched an episode of Hanselminutes where Scott interviews Tess Fernandez about Debugging Crash Dumps in VS2010, and that technique seems like it could be really useful.</p>  <p>IntelliTrace is only available in Visual Studio 2010 Ultimate.  It seems to collect the values of all in-scope variables whenever an IntelliTrace event occurs.  Those watched events are configurable (from a long, but pre-determined list), and include things like button clicks, writing to the Debug log, registry access, etc.  If you encounter some non-desirable functionality in an application while debugging (or running their test tool), you can break in the debugger, and then see what the state was whenever one of the watched events occurred.  There is also an option to basically capture the state whenever a method is called, but that entails a significant performance penalty, as one might expect.  I found an article on MSDN that says: “With IntelliTrace, you can debug applications launched from Visual Studio and log files that were created by IntelliTrace or the test tool Test and Lab Manager. You cannot use IntelliTrace with applications launched outside Visual Studio and attached using the Attach to command. IntelliTrace does not support remote debugging of applications that are running on other computers.”  That implies to me that there’s no real way to use this functionality to figure out what happened when a bug occurred on a user’s computer, unfortunately.  That article is here: <a href=""http://msdn.microsoft.com/en-us/library/dd264915%28VS.100%29.aspx"">http://msdn.microsoft.com/en-us/library/dd264915(VS.100).aspx</a> .  Also note that although you can step backwards in the debugger (and step out of methods to see what the variables were in the calling method) in IntelliTrace, you can only step in increments of IntelliTrace events (which can include method calls if you configured VS that way), so it will step over big chunks of code if they don’t include watched events.</p>  <p>Here are some posts about how to get started using IntelliTrace: <a href=""http://blogs.msdn.com/habibh/archive/2009/10/20/getting-started-with-visual-studio-2010-intellitrace-hello-intellitrace.aspx"">http://blogs.msdn.com/habibh/archive/2009/10/20/getting-started-with-visual-studio-2010-intellitrace-hello-intellitrace.aspx</a> and <a href=""http://blogs.msdn.com/habibh/archive/2009/10/21/the-future-of-debugging-is-here-visual-studio-2010-now-supports-stepping-back-in-the-debugger.aspx"">http://blogs.msdn.com/habibh/archive/2009/10/21/the-future-of-debugging-is-here-visual-studio-2010-now-supports-stepping-back-in-the-debugger.aspx</a></p>  <p>Debugging crash dumps, however, does seem like something that can be done to troubleshoot undesirable functionality that happened on a user’s computer (or on a production server).  Apparently in Vista and Windows 7, there is functionality in Task Manager such that you can right-click on a process and choose “Create Dump File” which creates a file in “the temp directory”.  (Apparently there are separate apps you can download to generate such dump files with Windows XP, such as “DebugDiag”, but I'm not sure if that works with managed code.)  You can then open the resulting file in Visual Studio 2010 and, provided you have the source code for the application, debug it in “Mixed Mode” (meaning you can see what was happening in managed code as well as in Native code).  Although you can’t step in the debugger when you’ve loaded a dump file, you can see all the values of the variables in memory (by highlighting over them in code just like typical debugging), and using the “Parallel Stacks” window in VS2010, you can get a visualization of the code that all active threads were executing when the dump was generated, and click through to see what all the variables were set to in a given thread when the dump was generated.  It was implied in passing that this will work with applications compiled for .NET 3.5.  It seems to me this would be incredibly useful for troubleshooting a problem that can’t be reproduced.  When the problem happens, just tell the user to create a dump file, send it to development, and then see what was happening with their app at the time.  That screencast is here: <a href=""http://channel9.msdn.com/posts/Glucose/Hanselminutes-on-9-Debugging-Crash-Dumps-with-Tess-Ferrandez-and-VS2010/"">http://channel9.msdn.com/posts/Glucose/Hanselminutes-on-9-Debugging-Crash-Dumps-with-Tess-Ferrandez-and-VS2010/</a>  I'm excited about this functionality, and I'm hoping to be able to spend more time trying to debug Crash Dumps created from some of my company's WinForms applications, and seeing if it is feasible to do from Windows XP (which is installed on many of the workstations running our applications).  When and if that comes to fruition, I'll be writing another post on this topic.</p>",0,93,troubleshooting-non-reproducible-bugs-in-visual-studio-2010,2009-11-07 00:16:08.521
+17,Introduction to IronRuby - presentation materials,2010-04-22 21:49:48.461,1,Pat Gannon,PatrickJosephGannon@yahoo.com,0,,2010-04-22 21:49:48.461,"Attached is the Powerpoint slide deck and two sample applications (application plug-in and simple DSL) that I used for my presentation for NBNUG on Tuesday, 4/20/10.  <p>   </p><div style=""padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; display: inline; padding-top: 0px"" id=""scid:fb3a1972-4489-4e52-abe7-25a00bb07fdf:a968b212-06e4-4880-802a-ad7ed61bd648"" class=""wlWriterSmartContent""><p> <a href=""http://www.patrickgannon.net/Images/IntroductiontoIronRubypresentationmateri_13273/IntroductiontoIronRuby.ppt"" target=""_blank"">Slide deck</a></p></div>   <p>   </p><div style=""padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; display: inline; padding-top: 0px"" id=""scid:fb3a1972-4489-4e52-abe7-25a00bb07fdf:7e262ed6-02a6-4bde-8482-11658947ac15"" class=""wlWriterSmartContent""><p> <a href=""http://www.patrickgannon.net/Images/IntroductiontoIronRubypresentationmateri_13273/DSL_sample.zip"" target=""_blank"">DSL Plugin</a></p></div>   <div style=""padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; display: inline; padding-top: 0px"" id=""scid:fb3a1972-4489-4e52-abe7-25a00bb07fdf:83a747f2-4469-4918-ae66-8754533ada55"" class=""wlWriterSmartContent""><p> <a href=""http://www.patrickgannon.net/Images/IntroductiontoIronRubypresentationmateri_13273/AppPlugin_sample.zip"" target=""_blank"">App Plugin</a></p></div>",0,93,introduction-to-ironruby---presentation-materials,2010-04-22 21:49:48.478
+18,Writing WPF apps using Kiddo/IronRuby and the MVVM pattern,2010-06-02 13:12:04.479,1,Pat Gannon,PatrickJosephGannon@yahoo.com,0,,2010-06-02 13:18:53.471,"<p><a href=""http://www.ihaveaframework.com/2010/05/introducing-kiddo-a-ruby-dsl-for-building-simple-wpf-and-silverlight-applications/"">Kiddo is a Ruby DSL for building simple WPF and Silverlight applications</a>, inspired by the <a href=""http://wiki.github.com/shoes/shoes/okay-well-shoes"">Shoes library</a>.  It’s still an early alpha, but a very cool concept none-the-less.  I rather like the idea of being able to produce a slick looking WPF (or Silverlight) UI using a simple Ruby API.  The basic syntax looks like this (taken from the post linked to above):</p>  <p>require ""kiddo"" </p>  <p>Kiddo.start do    <br />    <br />  draw :stack do     <br />    draw :text, ""Text to reverse:"", :font_size =&gt; 18     <br />    draw :edit_box, :named =&gt; ""input""     <br />    draw :text, ""Your string will show up here."", :named =&gt; ""result""     <br />    draw :button, ""Reverse It!"", :named =&gt; ""fun_button""     <br />  end     <br />    <br />  after :fun_button.is_clicked do     <br />    :result.text = :input.text.reverse     <br />  end     <br />    <br />end </p>  <p>If you run this, you’ll get something like this on your screen: </p>  <p><img alt="""" src=""http://imgur.com/hYIPj.png"" />     <br />You type in some text in the textbox, click the button, and the app will reverse the string and show it above the button.  I think the sample code is fairly self explanatory, but if you’re not sure what it’s doing, check out the link above. </p>  <p>The only issue I had with Kiddo is that it wasn’t clear how one could test the logic that was occurring in one of the event handlers (like the string reversing logic in the “after” clause above).  I wasn’t able to figure out how I could plug in an <a href=""http://msdn.microsoft.com/en-us/magazine/dd419663.aspx"">MVVM</a> (Model View View-Model: the approximate thick-client equivalent of the Model View Controller pattern for web applications) framework without modifying Kiddo, so I went ahead and monkey patched it to support a very basic type of MVVM that would enable me to easily test the logic that handled UI events.  The MVVM extension would need enhancing to be used for probably anything significant, but I think that’s probably true of Kiddo also.  Here is the modified Kiddo example, hooking into the extensions I added… </p>  <p>require ""kiddo""    <br />require ""kiddo_mvvm""     <br />require ""main_view_model""     <br />    <br />    <br />Kiddo.start(:view_model =&gt; MainViewModel) do     <br />  draw :stack do     <br />    draw :text, ""Text to reverse:"", :font_size =&gt; 18     <br />    draw :edit_box, :named =&gt; ""input""     <br />    draw :text, ""Your string will show up here."", :named =&gt; ""result""     <br />    draw :button, ""Reverse It!"", :named =&gt; ""fun_button""     <br />  end  <br />    <br />  command :fun_button.is_clicked, :reverse_text     <br />end     <br />    <br />There are three differences between this and the original example.  First, the updated example requires the file with the Kiddo extension I added (kiddo_mvvm.rb) and file with the ViewModel that has the logic that will respond to the button press (main_view_model.rb)  Next, the ViewModel class is associated with the sample UI by passing it in as an option on the Kiddo.start method call.  Finally, instead of having an “after” clause with the actual logic that responds to the button click, we have a call to the new “command” method which ties the button click event (:fun_button.is_clicked) to the method on the ViewModel that should be executed when the event fires (reverse_text). </p>  <p>Here is the code for the ViewModel class containing the logic (main_view_model.rb): </p>  <p>class MainViewModel    <br />  attr_accessor :input     <br />  attr_accessor :result     <br />    <br />  def reverse_text     <br />    @result = @input.reverse     <br />    @input = ""thank you""     <br />  end     <br />end     <br />    <br />It defines public getter/setter properties that correspond to the text of the “input” textbox and the “result” text (label).  It also defines the “reverse_text” method that is invoked by the MVVM extensions to Kiddo in response to the button being clicked.  That method reverses the string in “input” and sets it into “result”.  To illustrate the advantage that this approach has to simply calling a method on a business object in an “after” clause (that the command can easily read from and write to several bound widgets), it also sets “input” to “thank you”.  Now, you can run the revised sample which behaves like the original sample except that it also puts “thank you” in the input box after you click the button. </p>  <p>Now you can write a test directly against MainViewModel to test the logic without bringing the actual UI into play.  Here is a simple example of that (test_MVVM_custom.rb), using the very simple Test::Unit ruby testing framework: </p>  <p>require ""test/unit""    <br />require ""main_view_model""     <br />    <br />class MainViewModelTest &lt; Test::Unit::TestCase     <br />  def test_reversing     <br />    vm = MainViewModel.new     <br />    vm.input = ""mytest""     <br />    vm.reverse_text     <br />    assert_equal ""tsetym"", vm.result     <br />  end     <br />end     <br />    <br />The fixture defines a single test that instantiates the ViewModel, sets the input to “mytest”, calls reverse_text and verifies that the result is “tsetym”.  Running a test/unit test is very simple, simply execute the ruby file! (ir test_MVVM_custom.rb)     <br />Finally, here is the code for the MVVM extensions I added to Kiddo (kiddo_mvvm.rb):</p>  <p>module Kiddo    <br />  class App     <br />    attr_accessor :view_model     <br />  end     <br />    <br />  class &lt;&lt; self     <br />    alias_method :original_start, :start     <br />  end     <br />    <br />  def self.start(options={}, &amp;block)     <br />    view_model = options.delete(:view_model)     <br />    if view_model     <br />      App.instance.view_model = view_model.new     <br />    end     <br />    original_start options, &amp;block     <br />  end     <br />    <br />  def command(hash, view_model_method)     <br />    view_model = App.instance.view_model     <br />    if !view_model     <br />      raise ""Must pass a ViewModel instance to Kiddo.start in order to bind a command""     <br />    end     <br />    hash[:instance].send hash[:method] do |sender, args|     <br />      #Copy data from widgets into ViewModel     <br />      view_model.methods.each do |method|     <br />        if method.index(""="") == method.length - 1     <br />          property = method.chop  <br />                 widget = App.instance.locate property  <br />    <br />                 if widget and defined?(widget.text)  <br />                   view_model.send method, widget.text  <br />                 end     <br />        end     <br />      end     <br />      view_model.send view_model_method     <br />      #Copy data from ViewModel back into widgets     <br />      view_model.methods.each do |method|     <br />        if method.index(""="") != method.length - 1     <br />          property = method     <br />          widget = App.instance.locate property     <br />          if widget and widget.respond_to?(""text="")     <br />            new_text = view_model.send method     <br />            widget.text = new_text     <br />          end     <br />        end     <br />      end     <br />    end     <br />  end     <br />end     <br />    <br />This code theoretically shouldn’t need to get modified on an app by app basis (except to enable new types of controls, etc.)  It essentially just adds in support for the “view_model” option on Kiddo.start and then defines the new “command” method.  That method loops through all the methods on the ViewModel that end in “=” (Ruby property setters) and tries to match them to UI widgets based on their name.  When a match is found, it sets the ViewModel property to the text of the corresponding widget.  (Obviously this approach won’t work for all types of widgets, but it’s a start!)  Next, it calls the method on the ViewModel that has the name passed in from the caller.  Finally, it loops through all the methods on the ViewModel that don’t end in “=” and tries to match those to widget names.  When a match is found, it sets the text on the widget to the corresponding property value from the ViewModel.  This enables the ViewModel class to effectively “bind” to widgets simply by creating a getter/setter property with the same name as the widget. </p>  <p>I’m contemplating porting MongoDB Management Studio to use Kiddo, so if that comes to pass, then there will likely be a number of enhancements to this extension.</p>",1,93,writing-wpf-apps-using-kiddoironruby-and-the-mvvm-pattern,2010-06-02 13:12:04.480
+19,XP vs Kanban: New Product Development,2010-07-08 19:40:19.487,1,Pat Gannon,PatrickJosephGannon@yahoo.com,0,,2010-07-08 19:40:19.487,"<h3>Our Situation</h3>  <p><a href=""http://www.hsihealth.com/"">My team and I</a> are currently working on a new line-of-business web application, and we had a discussion today about what the best Agile process would be for our current endeavor. Up until last Friday, we have been practicing <a href=""http://www.extremeprogramming.org/"">Extreme Programming</a> (XP). We generally have week-long iterations, starting on Friday mornings and ending on Thursday evenings (so that end-of-iteration crunch time to meet our iteration commitment doesn’t fall on a Friday evening).  Friday mornings we have our stand-up, then our retrospective, and then we plan our next iteration.  Last Friday, we decided to try out a Lean/pull process for a week.  This morning at our stand-up, I was trying to pick between working on a rather large story that was at the top of our “Ready” queue, which I probably could not have finished by the end of the day, and a smaller story just below that is more manageable for today.  If we were to continue using Lean/Pull, having the story half-finished at the end of the day is not such a problem, but if we’re going back to XP and fixed-length iterations, I need to make sure there’s no work-in-progress by EOD.  This post is about which process we decided to use and why.</p>  <p> </p>  <h3>Extreme Programming</h3>  <p><img style=""border-bottom: 0px; border-left: 0px; margin: 0px 15px 0px 0px; display: inline; border-top: 0px; border-right: 0px"" title=""Motorcycle"" border=""0"" alt=""Motorcycle"" align=""left"" src=""http://www.patrickgannon.net/Images/XPvsKanbanNewProductDevelopment_D11E/Motorcycle.jpg"" width=""244"" height=""160"" />An advantage of XP over Kanban is our perception that its easier to convey rough estimates of a batch of work to upper management.</p>  <p><a href=""http://www.thefreakparade.com/"">My boss</a> (the CTO) routinely meets with the CEO and COO of our small company and they will discuss a strategic new product, or a fairly large module to be added to an existing product.  They will collaboratively write a set of stories, and then on the following Friday, the development team will meet to give a rough estimate to each of those stories (or each of the “must haves” if there are a lot of stories).  Once we’ve done that, my boss will divide the sum of estimates by our weekly velocity (the average amount of work we complete per week), then multiply by a risk-factor, to produce an estimate of when that chunk of work will be done, and conveys that back to upper management.  The estimate and the scope it represents are not set in stone, and everyone understands that. This still has value to upper management, because they can choose to cancel or defer that chunk of work if its expected value isn’t roughly commensurate with the required effort. Also, it serves as a signal to whether or not they should be brainstorming new strategic products/modules, or whether we’re busy enough that it’s not worth-while for the moment. Additionally, the iteration commitment in XP provides a bit of security in knowing that the work currently under construction will be done by the end of the week, which can be communicated to other stakeholders if asked.</p>  <p>In an ideal world (eg. textbook Agile/XP), we would be able to deliver the most valuable features to production in one iteration, generate some value, and build from there. In the real-world (or in our world in any case), there is often a minimum marketable feature set that must be completed in order for a new application to deliver any value in its business context. In our business, our customers are busy and selective, so if you demonstrate something for them that doesn’t do the core functions that sparked their interest, at best: they’re not going to use it in its current state. At worst: they will lose interest in the new product and decline to dedicate any more attention to it in the future. Another factor that can result in a minimum marketable feature set like this is a marketing push. Given a fixed marketing budget, are you going to spend those valuable dollars running that full-page ad in a trade journal after the product has had just a week of development?  I think that would probably be unwise in most situations. All of this is certainly not to say we should return to waterfall and decide the scope up front, then do it ‘til it’s ‘done’, etc., but merely that like most things in life, selecting when to ‘launch’ a new application is a balance. You want to launch with the minimum set of functionality that will actually garner the attention of your intended audience, without doing so much up front that you need to do a ton of re-work after it’s used in production and the users tell you everything that’s wrong with it.  The trick is to implement A, B and C (if those are the features that are absolutely critical) without trying to deliver D, E and F (the nice-to-haves) at the same time. The problem is that the effort required to build A, B and C often takes more than one reasonably-sized iteration, in the case of a new application.</p>  <p>To sum up, the fixed length iterations used in XP enable us to deliver valuable timeframe estimates to upper management, and I don’t see a way around that in our business context.</p>  <p> </p>  <h3>Kanban</h3>  <p><img style=""border-bottom: 0px; border-left: 0px; margin: 0px 15px 0px 0px; display: inline; border-top: 0px; border-right: 0px"" title=""Kanban"" border=""0"" alt=""Kanban"" align=""left"" src=""http://www.patrickgannon.net/Images/XPvsKanbanNewProductDevelopment_D11E/Kanban.jpg"" width=""504"" height=""379"" /> <a href=""http://www.agileproductdesign.com/blog/2009/kanban_over_simplified.html"">Kanban</a> is Japanese for “signboard” or “billboard”. “Kanban is a signaling system to trigger action. As its name suggests, kanban historically uses cards to signal the need for an item.” (<a href=""http://en.wikipedia.org/wiki/Kanban"">Wikipedia</a>)  We have actually been using a <a href=""http://agilezen.com/"">virtual Kanban board</a> for a little while now, as in it’s simplest usage, it’s effectively similar to the XP-style story board (index cards stuck on a ferrous whiteboard with colored magnets) we were using previously.  The process change I referred to previously is that we briefly tried out a pull system, where our stakeholders added and prioritized stories in the “Ready” queue at will, theoretically signaled by our completion of work.  We tried this rather than having a fixed-length iteration this week, prompted in part by it being a short week due to the 4th of July holiday recognized on Monday.</p>  <p>What attracted us to a pull-system is the flexibility it gives stakeholders to introduce new cards or prioritize cards in the middle of an iteration. (Both are prohibited in XP: scope is fixed for the current iteration and the order of story implementation is selected by dev team members based on the logical flow of work occurring during the iteration.)  The other nice thing about it is that it avails us to interesting approaches (like <a href=""http://en.wikipedia.org/wiki/Value_stream_mapping"">Value Stream Mapping</a>) for maximizing the throughput of new features.  (In other words, minimizing the amount of time it typically takes a story to go from conception to production.) It definitely sounds nice in principal, and seems to have worked out well for Toyota.</p>  <p>The down-side of using Kanban when developing a new application is that there’s no apparent way to do the broad estimates that we currently communicate to upper management.  Although you can use your calculated cycle time (the average amount of time it takes a feature to go from conception to production) to estimate when a particular feature will be delivered to production, what about the time required to deliver the minimum marketable set of features?  It doesn’t seem possible to use cycle time to calculate that, and you can’t use velocity if you don’t have fixed length iterations.  Furthermore, the chunks of work represented by the minimum set of marketable features doesn’t seem very compatible with a pull system.  The stakeholders aren’t adding a feature to the queue as we get work done, they’re telling us the minimum set of features that are needed before they’re willing to call a meeting with a key client to demonstrate a new application, and that seems logical given the circumstances.  Lastly, calculating cycle time and identifying bottle necks becomes much more difficult if the stories moving through the value stream are not similarly sized, and they commonly are not toward the beginning of an applications lifetime, since there is little or no infrastructure in place at the beginning.</p>  <p> </p>  <h3>Decision</h3>  <p>Since the value of being able to produce rough estimates for new applications to upper management exceeds the value of them being able to add and prioritize stories in the middle of an iteration, we decided to go back to using XP for our next iteration.  We will continue to use XP on this application (and all new functionality which can’t be fully launched after one iteration) until it is actually being used in production. We will deliver it to a production environment at regular intervals prior to that, and demonstrate it there for upper management. Once the intended users are actually using it in production and getting value from it, we have tentatively decided to try out a pull system again, since it will make more sense to have new features be pulled through the system in response to work being completed once we are getting feedback from the intended audience, and rough estimates will not need to be communicated back to upper management for that application.  Does ‘XP for brand new apps, Kanban for enhancements’ seem like a good modus operendi?  One thing that occurs to me as I’m reading back over my post is that if had decided to go with a pull system from the start, we could use some estimation methodology that is unrelated to our process (for example some flavor of <a href=""http://en.wikipedia.org/wiki/COCOMO"">COCOMO</a>, or <a href=""http://www.urbandictionary.com/define.php?term=scientific-wild-ass+guess"">SWAG</a>, or you name it), although I gather that the velocity-based estimates we have been using since we adopted XP have been a lot more accurate than estimates given before the company used an Agile process (although I guess that could have to do with adoption of other Agile practices keeping us focused).  If anybody reading this has implemented a new application using a pull system under similar constraints, how did you deal with estimation (was it anywhere near accurate?), and was your work queue much larger at the beginning of the project, or was it small throughout?</p>  <div style=""padding-bottom: 0px; margin: 0px; padding-left: 0px; padding-right: 0px; display: inline; float: none; padding-top: 0px"" id=""scid:0767317B-992E-4b12-91E0-4F059A8CECA8:23d3bbdd-07be-430d-869d-924965537eb0"" class=""wlWriterEditableSmartContent"">Technorati Tags: <a href=""http://technorati.com/tags/Agile"" rel=""tag"">Agile</a>,<a href=""http://technorati.com/tags/Extreme+Programming"" rel=""tag"">Extreme Programming</a>,<a href=""http://technorati.com/tags/XP"" rel=""tag"">XP</a>,<a href=""http://technorati.com/tags/Lean"" rel=""tag"">Lean</a>,<a href=""http://technorati.com/tags/Lean+Software+Development"" rel=""tag"">Lean Software Development</a>,<a href=""http://technorati.com/tags/Kanban"" rel=""tag"">Kanban</a></div>",0,93,xp-vs-kanban-new-product-development,2010-07-08 19:40:19.499
+20,Software Developer Maturity Stages,2010-09-23 18:24:16.503,1,Pat Gannon,PatrickJosephGannon@yahoo.com,0,,2010-09-23 18:24:16.503,"<p>In the software industry (as in many other industries), developers are commonly categorized as either Junior-level, intermediate, or Senior-level.  The most typical definition for these distinctions is based on the number of years of experience (0-2 years = junior, 2-5 years = intermediate, &gt;5 years = senior, or something along those lines).  This post describes an alternative basis for making these distinctions that is based on the type of designs that a developer creates, rather than the number of years they have been creating software professionally.</p>  <p>Since our trade is fairly difficult intellectually, I don’t think that the number of years of experience accurately dictates the effectiveness of a developer, and thus it’s a poor basis for distinction.  If you’re not actively trying to improve, additional years of experience probably doesn’t make you much more effective, and my experience working with a fair amount of developers at a number of different companies reflects that.</p>  <p>Here is the basis I’m going to start using for categorizing developers:</p>  <p><strong>Junior</strong>: Creates overly-simple designs with lots of duplication. Their apps are easy to understand, but hard to maintain.</p>  <p><strong>Intermediate</strong>: Creates overly-complex designs with lots of unnecessary indirection. Typical code smells that indicate an intermediate developer are very long, convoluted class names that don’t convey much meaning, unnecessary abstractions and use of frameworks that aren’t adding any value in the context (but increase complexity). Their apps have a high learning curve to understand the architecture, but then are fairly maintainable (for at least intermediate-level developers) once you’ve successfully grokked all the indirection.</p>  <p><strong>Senior</strong>: Creates simple, elegant designs.  Their apps are fairly easy to understand (for at least intermediate-level developers), maintain and enhance. They use abstractions where they make sense and frameworks that add value to the particular application.</p>  <p>Am I right/wrong/silly? Leave a comment!</p>",2,93,software-developer-maturity-stages,2010-09-23 18:24:16.511
+21,Innovation Is More About Hard Work and Salesmanship Than Genius,2010-10-13 14:29:46.440,1,Pat Gannon,PatrickJosephGannon@yahoo.com,0,,2010-10-13 14:29:46.440,"<p>I am about 75% done reading <a href=""http://www.amazon.com/Myths-Innovation-Scott-Berkun/dp/0596527055"">The Myths of Innovation</a> by <a href=""http://www.scottberkun.com/"">Scott Berkun</a> (first edition), but I decided to post about what I’ve learned from it already since it’s <a href=""http://www.scottberkun.com/blog/2010/today-is-myths-of-innovation-day-help-wanted/"">Myths of Innovation day</a>.  The book has been a great read, challenging our perceptions about how innovation occurs by examining the roots of those perceptions, and looking closely at how it actually occurs.</p>  <p>One of the first things that I found interesting was the way it highlighted the common view that innovation occurs by some chance event, or because something magical happened to a worthy intellect.  In fact, the word “Muse”, used to describe sources of inspiration, is derived from a set of Greek goddesses that were believed to provide that inspiration.  Clearly, early civilizations viewed innovation as purely magical, and to an extent, that view has carried over into today.</p>  <p>Similarly, innovators are immortalized as having carried out a piece of our collective destiny by executing on some mammoth realization.  In reality, innovations generally occur as incremental improvements upon the ideas of others, conceived of to solve a specific problem, often without having any idea of the degree of change that would be ushered in by their innovation.  (<a href=""http://www.facebook.com/topic.php?uid=122433051111191&amp;topic=46"">Facebook, ne, FaceMash</a> anyone?)</p>  <p>Both the source of innovation and the people who contributed to it are vastly over-simplified in the historical accounts that we typically read about in the news or learn about in school.  The reason is that the real explanation for how innovation occurs is more complex and much less romantic, for lack of a better word.</p>  <p>Innovation is typically the result of someone putting in a lot of hard work for a long time refining the efforts of others to solve a specific problem.  Even hard work on the right problem must be accompanied by the right circumstances to achieve any results.  Furthermore, for those results to be developed into a significant innovation, the results must be delivered to people around them in the right way.  People need to understand the advancement, how they will benefit from it, and not be scared of any potential risks associated with it (and they need to hear about it in the first place).  At that point, it’s possible that if the stars are aligned in such a way that the right people will benefit from applying the innovation to a series of unforeseen (and possibly larger) problems, then the innovator be recognized by the annals of history and lauded in the media, unlike all the intermediate works that were built upon and their inventors, as well as technically superior inventions that weren’t successfully presented to the world.</p>  <p>Want to know more? Read the book! I highly recommend it.</p>",0,93,innovation-is-more-about-hard-work-and-salesmanship-than-genius,2010-10-13 14:29:46.446
+22,WebSockets presentation materials,2010-10-20 21:30:55.451,1,Pat Gannon,PatrickJosephGannon@yahoo.com,0,,2011-01-12 13:36:21.520,"<p>Attached is the source code I used to demonstrate WebSockets and my slide-deck (in the Open Office .odp format as well as exported to .ppt) at the NBNUG meeting yesterday (10/19/10).  Client.html is the HTML/Javascript client, Server.cs is the C# server that just needs to be compiled into a console app project, referencing Nugget.dll (source is here: <a href=""http://nugget.codeplex.com/"">http://nugget.codeplex.com/</a>).</p>
+<div style=""PADDING-BOTTOM: 0px; MARGIN: 0px; PADDING-LEFT: 0px; PADDING-RIGHT: 0px; DISPLAY: inline; FLOAT: none; PADDING-TOP: 0px"" id=""scid:fb3a1972-4489-4e52-abe7-25a00bb07fdf:6440905d-5981-49b1-b85c-457510a14eac"" class=""wlWriterEditableSmartContent"">
+<p>Presentation Materials <a href=""http://patrickgannon.net/Attachments/WebSocketspresentationmaterials_128BF/WebSocketsPresentation.zip"">WebSocketsPresentation.zip</a></p>
+<p><strong>UPDATE</strong>: <font face="""">When I presented on WebSockets for NBNUG a few months ago, someone asked if it was possible to host WebSockets using IIS.  Microsoft just released a prototype demonstrating a WCF-based WebSockets application that is hosted in IIS.  You can check that out here: <a href=""http://jclaes.blogspot.com/2011/01/html5-installing-microsoft-websockets.html"">http://jclaes.blogspot.com/2011/01/html5-installing-microsoft-websockets.html</a></font></p>
+</div>",0,93,websockets-presentation-materials,2010-10-20 21:30:55.469
+23,Rake Runs RSpec Tests Twice,2010-11-04 18:17:01.475,1,Pat Gannon,PatrickJosephGannon@yahoo.com,0,,2010-11-04 18:17:01.475,"<p>We had a problem where running individual specs worked as expected, but running rake ran the whole test suite twice.  (BTW, We are running Rails 3.0.1 and RSpec 2.0.1.)  It looks like the problem is that we had run ‘rails generate rspec:install’ back when we were running RSpec 2.0.0.beta.22, and since, we upgraded to RSpec-2.0.1.  It appears that the RSpec installer for the beta version created an rspec.rake file under lib/tasks, which is no longer required for RSpec 2.0.1, and is effectively duplicitous of what is invoked through the gem’s own rake tasks (it would seem).</p>  <p>I removed rspec.rake and now rake only runs the test suite once!  Leave a comment if it this was helpful.</p>",0,93,rake-runs-rspec-tests-twice,2010-11-04 18:17:01.482
+24,"Why Ruby Rocks, In A Nutshell",2010-11-15 14:09:32.454,1,Pat Gannon,PatrickJosephGannon@yahoo.com,0,,2010-11-15 14:09:32.454,"<p>I read a great description of my favorite aspect of Ruby in <a href=""http://www.amazon.com/RSpec-Book-Behaviour-Development-Cucumber/dp/1934356379"">The RSpec Book</a>, by David Chelimsky, et al.  It was so apt, I had to share it. Here it is (emphasis mine):</p>  <p><em>When first learning Ruby, you might get a sense that the language is     <br />reading your mind. Say you need a method to iterate through the keys      <br />of a Ruby hash so you type hash.each_pair {|k,v| puts k} just to see if it      <br />works, and, of course, it does! And this makes you happy!      <br />Ruby is filled with examples of great, intuitive APIs like this, and it      <br />seems that </em><strong><em>developers who write their own code in Ruby strive for the       <br />same level of obvious, inspired by the beauty of the language. We all        <br />want to provide that same feeling of happiness to developers that they        <br />get just from using the Ruby language directly.</em></strong></p>  <p> </p>  <p>Well put.</p>",0,93,why-ruby-rocks-in-a-nutshell,2010-11-15 14:09:32.466
+25,Branching with gitflow,2011-01-07 18:06:47.459,1,Pat Gannon,PatrickJosephGannon@yahoo.com,0,,2011-01-07 18:06:47.459,"<p>If you work on a fairly big team and you haven’t checked out gitflow yet, you should.  It’s an all-encompassing <a href=""http://github.com/downloads/nvie/gitflow/Git-branching-model.pdf"">git</a> branching strategy for dealing with production bug fixes occurring simultaneously with on-going feature development and the like.  I did some research on it today to evaluate its suitability for our team, so I’ve decided to write up a post summarizing the gist of the methodology for those of you that haven’t looked into it already.</p>  <p>Using the gitflow branching model, there are 5 (!) different types of branches.  I’ll summarize each type of branch, and while reading that, it may be useful to refer to the this diagram illustrating the interactions between the different branch types: <a title=""http://github.com/downloads/nvie/gitflow/Git-branching-model.pdf"" href=""http://github.com/downloads/nvie/gitflow/Git-branching-model.pdf"">http://github.com/downloads/nvie/gitflow/Git-branching-model.pdf</a></p>  <p> </p>  <h1>Branch Types</h1>  <p><b>master</b>: The master branch always contains production-ready code.  It should have either the same copy of the code that is running in production, or the copy of the code that is imminently being deployed to production.  Naturally, this branch is persistent and is never removed.  It exists in the central repository (origin), as well as on developer workstations.</p>  <p><b>develop</b>: This branch is the copy of the code that is being developed for the next prospective release.  Small features can be committed directly into this branch, but larger features should be developed in feature branches.  This branch is persistent and is never removed.  It exists in the central repository (origin), as well as on each developer workstation.  This is the branch that the CI process uses.</p>  <p><b>features</b>: These branches are named after a particular feature.  They are created (based on the “develop” branch) when work on the feature begins, and incremental work on the feature is committed to that branch.  They exist only on developer workstations.  If multiple developers are working on the same feature, they push/pull to/from each other’s feature branch, it would seem.  When work on the feature is code-complete, this branch is merged into the “develop” branch, and then the feature branch is deleted.  Merging a feature branch into develop signifies that the feature will be included in the next release.  By contrast, feature branches may be long-lived, and may not be merged into develop until several releases have passed, for a large feature.  Once a developer has installed gitflow, they can create a new feature branch by typing ‘git flow feature start [feature-name]’.  (That just does ‘git checkout –b [feature-name] develop’.)  When the feature is done and ready to be merged into ‘develop’, the developer types “git flow feature finish [feature-name]”.  (This does a ‘git checkout develop’, ‘git merge –no-ff [feature-name]’, ‘git branch –d [feature-name]’, and ‘git push origin develop’.)</p>  <p><b>releases</b>: These branches are named after a particular release version: a major (2.0) or minor (2.1) release version.  They are created (based on the “develop” branch) when all the features for the next release are code complete in the “develop” branch.  While the release is being tested, bug fixes are made into this branch.  New functionality, however, will continue to be made in the “develop” branch (and associated feature branches), and will not be included in the release.  (These branches are created at the same point in the development cycle when a “code freeze” might be declared in a development shop that doesn’t use any sort of branching.)  These branches are created with ‘git flow start [version]’, which it seems like it must just do a ‘git checkout –b release-[version] develop’, and then you probably still need to manually increment any applicable version files and then commit those changes.  When the release has been tested and is ready to go to production, it is merged into master, and also merged back into “develop” (so that any bug fixes made will be applied to future versions as well), then the branch is deleted, all with the command ‘git flow release finish [version]’.  (This does a ‘git checkout master’, ‘git merge –no-ff release-[version]’, ‘git tag –a [version]’, ‘git checkout develop’, ‘git merge –no-ff release-[version]’ and ‘git branch –d release-[version]’.)</p>  <p><b>hotfixes</b>: These branches are created for urgent bug fixes on the version that’s currently in production, and they are normally named after a point release (eg. ‘hotfix-1.2.1’).  They are very similar to release branches, except that are created from master.  They are created with ‘git flow hotfix start [version]’, then later merged (into master and develop) and deleted using ‘git flow hotfix finish [version]’.  These commands do very similar things to their equivalent release commands, as one might expect.</p>  <p> </p>  <h1>More information</h1>  <p>Original post on the branching model is here: <a href=""http://nvie.com/posts/a-successful-git-branching-model/"">http://nvie.com/posts/a-successful-git-branching-model/</a></p>  <p>Gitflow tool is here: <a href=""https://github.com/nvie/gitflow"">https://github.com/nvie/gitflow</a></p>  <p>Introductory post on basic gitflow usage is here: <a href=""http://jeffkreeftmeijer.com/2010/why-arent-you-using-git-flow/"">http://jeffkreeftmeijer.com/2010/why-arent-you-using-git-flow/</a></p>  <p> </p>  <h1>Conclusion</h1>  <p>If I was on a bigger team, I think this would make a lot of sense, but for our small team (three developers, including myself and <a href=""http://www.thefreakparade.com/"">our manager</a>), I think its a bit of overkill.  We are probably going to adopt a limited subset of this methodology: We will create hotfix branches and perhaps occasionally feature branches for very large features, in addition to the two permanent branches (master and develop), and we will probably use the gitflow tooling.  However, we probably won’t use specific release branches, and our use of feature branches will probably be limited at most (and they would exist on <a href=""https://github.com/"">github</a> for the duration of their life, contrary to the gitflow methodology).</p>",0,93,branching-with-gitflow,2011-01-07 18:06:47.473
+26,Awesome Information Radiation with Yammer and Pivotal Tracker,2011-01-24 14:49:43.457,1,Pat Gannon,PatrickJosephGannon@yahoo.com,0,,2011-01-24 14:57:02.440,"<p>I have integrated Pivotal Tracker (our project management software) with Yammer (our messaging software), and now everyone on the dev team can all stay up to date with what everybody else is doing in near real-time!</p>  <p> </p>  <h1>Why?</h1>  <p>When we started doing Agile (XP) here at my work 2.5 years ago, we used physical index cards for writing and organizing stories.  We have a big ferrous whiteboard in the team room, and we had a swim-lane for cards in the current iteration, and another for the backlog (and others at various times as we experimented with our process).  We had colored magnets that indicated the status of each story (red=not started, yellow=in progress and green=”done done”).  I had advocated for the use of physical story cards over project management software because I felt that physical cards in the team room was a more ambient information radiator for us than a system that a developer might check every few hours.  Also, it seemed like most of the project management tools at the time weren’t a great fit for our process, and physical cards couldn’t get any easier to organize into groups, write, toss, etc.</p>  <p>After a while, we discovered that our information radiator (the physical story board) wasn’t so radiant for stakeholders that aren’t developers (eg. executives and support) who don’t often come into the team room.  In the time since we had initially adopted Agile, light-weight tools became available that were a better fit for our process.  After working for a while with <a href=""http://agilezen.com/"">Agile Zen</a>, we wound up deciding that <a href=""http://www.pivotaltracker.com/"">Pivotal Tracker</a> was an even better fit for us.  Non-devs can log in and prioritize stories in the backlog, and check on our progress with ease.  However, we missed the information radiation within the dev team that had been offered by our physical story board.  (We had to actually pull up the app to see what’s going on with the rest of the team rather than just swivel your head, prompted by hearing someone walk up to the board.)  Since we had also started using <a href=""http://www.yammer.com/"">Yammer</a> (to keep in sync using more real-time, less formal messages than emails), we decided that integrating Pivotal Tracker with Yammer would be a great way to get the best of both worlds.  Although Pivotal Tracker already has Twitter integration, since we’re working on commercial (non-OSS) software, we thought Yammer would be a better way for us to stay synced up without potentially leaking our business strategy on a public Twitter account.</p>  <p> </p>  <h1>The upshot</h1>  <p>It turns out that both Pivotal Tracker and Yammer have well-documented public APIs, so integrating the two wasn’t that hard.  (Pivotal Tracker can post XML to a URL you supply any time a story is updated, and Yammer has an OAuth interface for publishing messages.)  We created an email address for pivotal tracker on our corporate domain name, and created a Yammer account for it so that messages from Tracker would be visually distinct from everybody else’s normal messages.  Using the integration I created, that account sends a Yammer message every time the status of a story changes, and includes a link to the story.  It looks like this:</p>  <p><a href=""http://www.patrickgannon.net/Images/AwesomeInformationRadiationwithYammerand_D04E/pivotaltrackeryammer.png""><img style=""border-bottom: 0px; border-left: 0px; display: inline; border-top: 0px; border-right: 0px"" title=""pivotaltracker-yammer"" border=""0"" alt=""pivotaltracker-yammer"" src=""http://www.patrickgannon.net/Images/AwesomeInformationRadiationwithYammerand_D04E/pivotaltrackeryammer_thumb.png"" width=""344"" height=""382"" /></a> </p>  <p> </p>  <h1>The awesomeness</h1>  <p>With this integration in place, we now get awesome information radiation for the dev team, along with accessibility for other stakeholders.  As a bonus, any devs working outside the team room (or any other team members) get the same awesomeness as those in the team room as soon as they hook up to Yammer!  I published the source code for the integration to github, along with a README explaining how you can set this up for your own team: <a href="" https://github.com/PatrickGannon/pivotaltracker-yammer "">http://bit.ly/hWzW9Y</a></p>",0,93,awesome-information-radiation-with-yammer-and-pivotal-tracker,2011-01-24 14:49:43.466
