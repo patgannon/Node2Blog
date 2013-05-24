@@ -1,3 +1,4 @@
+require "rubygems"
 require "mongo"
 require "csv"
 include Mongo
