@@ -70,7 +70,7 @@ iframe::-webkit-scrollbar-thumb {
    word-wrap: break-word;      /* IE */
 }
 .container h1 {
-	font-size: 70px;
+	font-size: 32px;
   	font-family: sans-serif;
   	color: #505050;
 }
